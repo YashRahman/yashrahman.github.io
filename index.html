@@ -31,7 +31,7 @@
 
   <div class="message-container">
     <div id="message">
-      <strong>🎁 Surprise Jaan!!! 🎁</strong><br />
+      <strong>🎁 Surprise Jaan Pakhiii 🎁</strong><br />
       Happy birthday my love
     </div>
   </div>
@@ -112,7 +112,7 @@
     const scrollIndicator = document.getElementById('scrollIndicator');
     
     // Set target date
-    const targetDate = new Date('2020-05-04T00:00:00');
+    const targetDate = new Date('2025-05-04T00:00:00');
     
     // For testing, uncomment the next line to make the box open immediately
     // const targetDate = new Date(Date.now());
@@ -170,26 +170,70 @@
     }
 
     function createConfetti() {
-      const colors = ['#ffb6d9', '#d6a4ff', '#ffe066', '#a4ffea', '#ff99cc'];
+  const colors = ['#ffb6d9', '#d6a4ff', '#ffe066', '#a4ffea', '#ff99cc'];
+  const documentHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, 
+                                document.documentElement.clientHeight, document.documentElement.scrollHeight, 
+                                document.documentElement.offsetHeight);
+  
+  // Create more confetti for a fuller effect
+  for (let i = 0; i < 150; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
       
-      for (let i = 0; i < 100; i++) {
-        setTimeout(() => {
-          const confetti = document.createElement('div');
-          confetti.classList.add('confetti');
-          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-          confetti.style.left = Math.random() * 100 + 'vw';
-          confetti.style.width = Math.random() * 10 + 5 + 'px';
-          confetti.style.height = Math.random() * 10 + 5 + 'px';
-          confetti.style.animationDuration = Math.random() * 3 + 3 + 's';
-          document.body.appendChild(confetti);
-          
-          // Remove confetti after animation
-          setTimeout(() => {
-            document.body.removeChild(confetti);
-          }, 6000);
-        }, i * 30);
-      }
-    }
+      // Random color from our color palette
+      confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+      
+      // Random horizontal position across the full width
+      confetti.style.left = Math.random() * 100 + 'vw';
+      
+      // Start from top of the viewport
+      confetti.style.top = '-20px';
+      
+      // Random size between 5px and 15px
+      const size = Math.random() * 10 + 5;
+      confetti.style.width = size + 'px';
+      confetti.style.height = size + 'px';
+      
+      // Random rotation
+      const rotation = Math.random() * 360;
+      confetti.style.transform = `rotate(${rotation}deg)`;
+      
+      // Random animation duration between 4-8 seconds
+      // Longer duration means more time to reach the bottom
+      const duration = Math.random() * 4 + 4;
+      confetti.style.animationDuration = duration + 's';
+      
+      // Adjust the fall distance to ensure it reaches the bottom
+      const keyframeName = `confetti-fall-${Date.now()}-${i}`;
+      const styleSheet = document.createElement('style');
+      
+      styleSheet.textContent = `
+        @keyframes ${keyframeName} {
+          0% {
+            transform: translateY(0) rotate(${rotation}deg);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(${documentHeight}px) rotate(${rotation + 360}deg);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(styleSheet);
+      
+      confetti.style.animation = `${keyframeName} ${duration}s ease-in forwards`;
+      
+      document.body.appendChild(confetti);
+      
+      // Remove confetti after animation completes
+      setTimeout(() => {
+        document.body.removeChild(confetti);
+        document.head.removeChild(styleSheet);
+      }, duration * 1000);
+    }, i * 30);
+  }
+}
 
     function createMagicParticles() {
       const boxRect = giftBox.getBoundingClientRect();
