@@ -337,25 +337,26 @@ const secretCodes = {
     'tory': 'TORY Special! 👑\nYou\'re my queen, my everything, my forever person. i love you jaan! 💖',
     'cha': 'Cha Code! ☕\nJust like how chai makes everything better, you make my life perfect! ☕💕',
     'beautiful': 'Beauty Code! 🌸\nYou\'re not just beautiful outside, but your heart is the most beautiful thing I know! 💖',
-    'rysh': 'SUPER SECRET CODE! 💣\nAyhay\ Onk Bhalo laglo tumi mone rakhso eita akhono, dhonnobad my love 💖',
-    '0405': 'Birthday Special! 🎂\n Amar\ Favourite date shobche special date amar kache eita. i love you pakhi! 💖',
-    '1234': 'ehh eto easy nah!\nHEHE\ ',
+    'rysh': 'SUPER SECRET CODE! 💣\nAyhay Onk Bhalo laglo tumi mone rakhso eita akhono, dhonnobad my love 💖',
+    '0405': 'Birthday Special! 🎂\nAmar Favourite date shobche special date amar kache eita. i love you pakhi! 💖',
+    '1234': 'ehh eto easy nah!\nHEHE',
     'tajbiha': 'TAJBIHA Special! 👑\nYou\'re my queen, my everything, my forever person. i love you jaan! 💖',
 };
 
-        function checkSecretCode() {
-            const input = document.getElementById('secretCode').value.toLowerCase().trim();
-            const messageDiv = document.getElementById('secretMessage');
-            
-            if (secretCodes[input]) {
-                messageDiv.innerHTML = `<h3 style="color: #e91e63; margin-top: 1rem;">${secretCodes[input].split('\n')[0]}</h3><p>${secretCodes[input].split('\n')[1]}</p>`;
-                messageDiv.classList.remove('hidden');
-                messageDiv.style.animation = 'fadeInUp 0.5s ease-out';
-            } else if (input) {
-                messageDiv.innerHTML = `<p style="color: #666; margin-top: 1rem;">Not quite right! Try again... 💕<br><small>Hint: Think about what I always tell you! 😊</small></p>`;
-                messageDiv.classList.remove('hidden');
-            }
-        }
+function checkSecretCode() {
+    const input = document.getElementById('secretCode').value.toLowerCase().trim();
+    const messageDiv = document.getElementById('secretMessage');
+    
+    if (secretCodes[input]) {
+        const lines = secretCodes[input].split('\n');
+        messageDiv.innerHTML = `<h3 style="color: #e91e63; margin-top: 1rem;">${lines[0]}</h3><p>${lines[1]}</p>`;
+        messageDiv.classList.remove('hidden');
+        messageDiv.style.animation = 'fadeInUp 0.5s ease-out';
+    } else if (input) {
+        messageDiv.innerHTML = `<p style="color: #666; margin-top: 1rem;">Not quite right! Try again... 💕<br><small>Hint: Think about what I always tell you! 😊</small></p>`;
+        messageDiv.classList.remove('hidden');
+    }
+}
 
         // Personal song simulation
         function playPersonalSong() {
