@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Beautiful Wifey ❤️</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="floating-hearts" id="hearts"></div>
+    <div class="container">
+        <header class="header">
+            <h1 class="main-title">Tajbiha ❤️</h1>
+            <p class="subtitle">You make my world beautiful 💕</p>
+        </header>
+
+        <!-- Time-based Message -->
+        <div class="time-message">
+            <h3 id="timeGreeting">Good Morning, Beautiful!</h3>
+            <p id="timeMessage">Hope your day starts as wonderful as you are! ☀️</p>
+        </div>
+
+        <!-- Weather Widget -->
+        <div class="weather-widget">
+            <h3>Weather for My Love 🌤️</h3>
+            <p id="weatherInfo">Checking the weather for you... 💕</p>
+        </div>
+
+        <!-- Animated Tea Cup -->
+<div class="tea-section">
+  <div class="tea-cup">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <!-- Steam -->
+      <g class="steam">
+        <path d="M50 45 Q52 35 50 25" stroke="white" stroke-width="2.5" opacity="0.6" fill="none"/>
+        <path d="M60 45 Q62 35 60 25" stroke="white" stroke-width="2.5" opacity="0.5" fill="none"/>
+        <path d="M70 45 Q72 35 70 25" stroke="white" stroke-width="2.5" opacity="0.4" fill="none"/>
+      </g>
+
+      <!-- Saucer -->
+      <ellipse cx="60" cy="98" rx="35" ry="6" fill="#A67C52"/>
+      <ellipse cx="60" cy="96" rx="32" ry="4" fill="#D2B48C"/>
+
+      <!-- Cup Body -->
+      <path d="M42 50 Q40 90 60 90 Q80 90 78 50 Z" fill="#C9A57C" stroke="#8B5E3C" stroke-width="2.2"/>
+
+      <!-- Tea Surface -->
+      <ellipse cx="60" cy="50" rx="18" ry="4" fill="#6B3F1D"/>
+      <ellipse cx="60" cy="49" rx="18" ry="3" fill="#8B4513" opacity="0.8"/>
+
+      <!-- Optional Handle -->
+      <path d="M78 65 Q88 65 84 78 Q88 75 78 74" stroke="#8B5E3C" stroke-width="2.0" fill="none"/>
+
+      <!-- Subtle Design Line -->
+      <line x1="46" y1="70" x2="74" y2="70" stroke="#FFD700" stroke-width="1" opacity="0.3"/>
+    </svg>
+  </div>
+  <p style="color: rgba(255,255,255,0.95); font-size: 1.1rem; margin-top: 0.5rem;">
+    এক কাপ চা তোমার জন্য ☕💛
+  </p>
+</div>
+
+        <!-- Daily Compliment -->
+        <div class="compliment-section">
+            <h3> Compliments for you my love 💝</h3>
+            <p class="compliment-text" id="dailyCompliment">You're absolutely radiant today!</p>
+            <button class="love-button" onclick="generateCompliment()">New Compliment 💕</button>
+        </div>
+
+        <!-- Polaroid Gallery -->
+        <div class="polaroid-gallery">
+            <div class="polaroid">
+                <div class="polaroid-img">📸</div>
+                <div class="polaroid-caption">Our first date 💕</div>
+            </div>
+            <div class="polaroid">
+                <div class="polaroid-img">🌅</div>
+                <div class="polaroid-caption">Morning coffee together</div>
+            </div>
+            <div class="polaroid">
+                <div class="polaroid-img">🎂</div>
+                <div class="polaroid-caption">Your birthday surprise!</div>
+            </div>
+            <div class="polaroid">
+                <div class="polaroid-img">🌸</div>
+                <div class="polaroid-caption">Spring walk in the park</div>
+            </div>
+            <div class="polaroid">
+                <div class="polaroid-img">🎬</div>
+                <div class="polaroid-caption">Movie night cuddles</div>
+            </div>
+            <div class="polaroid">
+                <div class="polaroid-img">✈️</div>
+                <div class="polaroid-caption">Our weekend adventure</div>
+            </div>
+        </div>
+
+<!-- Real Moon Phases on Our Birthdays -->
+<div style="display: flex; justify-content: center; gap: 3rem; margin: 3rem 0; flex-wrap: wrap;">
+    
+    <!-- PHT's Moon - May 4, 2007 -->
+    <div style="text-align: center;">
+        <h3 style="color: #816e00; margin-bottom: 1rem; font-family: 'Dancing Script', cursive; font-size: 1.6rem;">
+            Your Moon Phase ✨<br>
+            <span style="font-size: 2rem; opacity: 0.8;">May 4th, 2007</span>
+        </h3>
+        <img src="4-5-2007.png" alt="Waning Gibbous Moon - May 4, 2007" style="width: 200px; height: auto; border-radius: 15px; box-shadow: 0 4px 20px rgba(255,255,255,0.3);">
+        <p style="color: #383000; font-size: 0.9rem; margin-top: 1rem;">🌖 Waning Gibbous Moon</p>
+    </div>
+
+    <!-- Your Moon - July 5, 2009 -->
+    <div style="text-align: center;">
+        <h3 style="color: #006e99; margin-bottom: 1rem; font-family: 'Dancing Script', cursive; font-size: 1.6rem;">
+            My Moon Phase ✨<br>
+            <span style="font-size: 2rem; opacity: 0.8;">July 5th, 2009</span>
+        </h3>
+        <img src="5-7-2009.png" alt="Waxing Gibbous Moon - July 5, 2009" style="width: 200px; height: auto; border-radius: 15px; box-shadow: 0 4px 20px rgba(255,255,255,0.3);">
+        <p style="color: #003d55; font-size: 0.9rem; margin-top: 1rem;">🌔 Waxing Gibbous Moon</p>
+    </div>
+
+</div>
+
+        <!-- Music Section -->
+        <!-- <div class="music-section"> -->
+        <!--     <h3>A Song Just For You 🎵</h3> -->
+        <!--     <p>Close your eyes and imagine my voice singing your favorite song... 💕</p> -->
+        <!--     <button class="love-button" onclick="playPersonalSong()">Play My Recording 🎤</button> -->
+        <!--     <div id="musicPlayer" class="hidden"> -->
+        <!--         <p style="margin-top: 1rem; font-style: italic; color: #666;"> -->
+        <!--             🎵 *Imagine beautiful humming/singing here* 🎵<br> -->
+        <!--             (In a real version, your actual recording would play here!) -->
+        <!--         </p> -->
+        <!--     </div> -->
+        <!-- </div> -->
+
+        <!-- Secret Code Section -->
+        <div class="secret-section">
+            <h3>Secret Message 🤫</h3>
+            <p>Enter our special code to unlock a hidden surprise:</p>
+            <input type="text" id="secretCode" class="secret-input" placeholder="Enter secret code..." maxlength="20">
+            <button class="love-button" onclick="checkSecretCode()">Unlock Secret 🔐</button>
+            <div id="secretMessage" class="hidden">
+                <h3 style="color: #e91e63; margin-top: 1rem;">Secret Unlocked! 💝</h3>
+                <p>You found it! Here's an extra special message just for you: You are the most incredible person I've ever met, and I fall in love with you more every single day. Thank you for being my everything. 💕✨</p>
+            </div>
+        </div>
+        
+        <div class="content-grid">
+            <div class="card">
+                <span class="card-icon">🌸</span>
+                <h3>Beautiful Soul</h3>
+                <p>Your kindness and grace light up every room you enter. You have the most beautiful heart I've ever known.</p>
+            </div>
+            
+            <div class="card">
+                <span class="card-icon">✨</span>
+                <h3>My Inspiration</h3>
+                <p>Every day with you is a new adventure. You inspire me to be the best version of myself and chase my dreams.</p>
+            </div>
+            
+            <div class="card">
+                <span class="card-icon">💝</span>
+                <h3>Perfect Together</h3>
+                <p>We complement each other perfectly. With you, I've found my home, my peace, and my forever happiness.</p>
+            </div>
+        </div>
+        
+        <div class="love-message">
+            <h2>A Message Just For You</h2>
+            <p>
+                Tory, this little corner of the internet is dedicated entirely to you and how amazing you are. 
+                You bring so much joy, laughter, and love into my life. Every moment we share becomes a treasured memory, 
+                and I can't wait to create countless more with you. You are my sunshine on cloudy days, 
+                my anchor in storms, and my greatest blessing. Thank you for being exactly who you are. 💖
+            </p>
+        </div>
+        
+        <div class="interactive-section">
+            <button class="love-button" onclick="showLove()">Click for a Surprise! 💕</button>
+        </div>
+    </div>
+    
+    <script>
+        // Create floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            const emojis = ['💖', '💗', '💘', '💝', '💞', '💕'];
+            heart.className = 'heart';
+            heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDelay = Math.random() * 6 + 's';
+            heart.style.animationDuration = (Math.random() * 3 + 6) + 's';
+            document.getElementById('hearts').appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 9000);
+        }
+        
+        // Create hearts periodically
+        setInterval(createHeart, 400);
+
+function updateTimeMessage() {
+  const now = new Date();
+  const hour = now.getHours();
+
+  const greeting = document.getElementById('timeGreeting');
+  const message = document.getElementById('timeMessage');
+
+  if (hour >= 7 && hour < 13) {
+    greeting.textContent = "Good Morning, My Love! ☀️❤️";
+    message.textContent = "Hope your day starts as wonderful as you are! I love you my pretty lady ❤️";
+  } else if (hour >= 13 && hour < 16) {
+    greeting.textContent = "Good Noon, Sunshine! 🌞";
+    message.textContent = "Dupur e kintu onk gorom, paani khaio beshi beshi ar rod e jaio nah. Always Thinking of you! 💫";
+  } else if (hour >= 16 && hour < 18) {
+    greeting.textContent = "Good Afternoon, Love! 🌤️";
+    message.textContent = "Hope your afternoon is as pretty as you are! chaa khaio biscuit er sathe!! 💕";
+  } else if (hour >= 18 && hour < 22) {
+    greeting.textContent = "Good Evening, Sweetheart! 🌆";
+    message.textContent = "Shondha hoye gese sharadin e tired hoye geso nischoi rest koro ektu ! Sending hugs! 🤗";
+  } else {
+    greeting.textContent = "Good Night Wifey! 🌙❤️";
+    message.textContent = "Bhalo moto chinta chara ekta ghum daw. I Love you jaan! ✨❤️";
+  }
+}
+
+
+        // Weather simulation (replace with real API in production)
+function updateWeather() {
+  const weatherInfo = document.getElementById('weatherInfo');
+  const apiKey = '3b9c041a4afd451299e224831250406'; // ✅ No trailing space
+  const location = 'Dhaka, Bangladesh';
+
+  weatherInfo.textContent = 'Loading weather...'; // Optional: UX feedback
+
+  fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(location)}&aqi=no`)
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
+    })
+    .then(data => {
+      const temp = data.current.temp_c;
+      const condition = data.current.condition.text;
+      const icon = data.current.condition.icon;
+      weatherInfo.innerHTML = `
+        <img src="https:${icon}" alt="${condition}" style="vertical-align:middle; width:24px; height:24px;">
+        It's ${condition.toLowerCase()} in Nawabganj, ${temp}°C 🌡️
+      `;
+    })
+    .catch(error => {
+      console.error('Weather API error:', error);
+      weatherInfo.textContent = 'Could not load weather info 🌧️';
+    });
+}
+
+
+
+
+        // Daily compliments
+const compliments = [
+];
+
+
+        function generateCompliment() {
+            const complimentElement = document.getElementById('dailyCompliment');
+            const randomCompliment = compliments[Math.floor(Math.random() * compliments.length)];
+            complimentElement.textContent = randomCompliment;
+            complimentElement.style.animation = 'pulse 1s ease-in-out';
+            setTimeout(() => {
+                complimentElement.style.animation = '';
+            }, 1000);
+        }
+
+        // Secret codes
+        const secretCodes = {
+            'iloveyou': 'Secret Unlocked! 💝\nYou found it! Here\'s an extra special message: You are the most incredible person I\'ve ever met! 💕',
+            'forever': 'Forever Code Unlocked! ♾️\nYou and me, always and forever. Nothing will ever change that. Fid-Dunya, Wal-Akhirah! 💕',
+            'TORY': 'TORY Special! 👑\nYou\'re my queen, my everything, my forever person. i love you jaan! 💖',
+            'cha': 'Cha Code! 🫖\nJust like how chai makes everything better, you make my life perfect! ☕💕',
+            'beautiful': 'Beauty Code! 🌸\nYou\'re not just beautiful outside, but your heart is the most beautiful thing I know! 💖',
+            'rysh': 'SUPER SECRET CODE! 💣\nAyhay\ Onk Bhalo laglo tumi mone rakhso eita akhono, dhonnobad my love 💖',
+            '0405': 'Birthday Special! 🎂\n Amar\ Favourite date shobche special date amar kache eita. i love you pakhi! 💖',
+            '1234': 'ehh eto easy nah!\nHEHE\ ',
+
+        };
+
+        function checkSecretCode() {
+            const input = document.getElementById('secretCode').value.toLowerCase().trim();
+            const messageDiv = document.getElementById('secretMessage');
+            
+            if (secretCodes[input]) {
+                messageDiv.innerHTML = `<h3 style="color: #e91e63; margin-top: 1rem;">${secretCodes[input].split('\n')[0]}</h3><p>${secretCodes[input].split('\n')[1]}</p>`;
+                messageDiv.classList.remove('hidden');
+                messageDiv.style.animation = 'fadeInUp 0.5s ease-out';
+            } else if (input) {
+                messageDiv.innerHTML = `<p style="color: #666; margin-top: 1rem;">Not quite right! Try again... 💕<br><small>Hint: Think about what I always tell you! 😊</small></p>`;
+                messageDiv.classList.remove('hidden');
+            }
+        }
+
+        // Personal song simulation
+        function playPersonalSong() {
+            const musicPlayer = document.getElementById('musicPlayer');
+            musicPlayer.classList.remove('hidden');
+            musicPlayer.style.animation = 'fadeInUp 0.5s ease-out';
+            
+            // Simulate playing
+            setTimeout(() => {
+                musicPlayer.innerHTML = `
+                    <p style="margin-top: 1rem; font-style: italic; color: #666;">
+                        🎵 *Soft humming of your favorite song* 🎵<br>
+                        "La la la... thinking of you..." 💕<br>
+                        <small>(This is where your actual recording would play! 🎤)</small>
+                    </p>
+                `;
+            }, 1000);
+        }
+        
+        // Interactive functions
+        function showLove() {
+            const messages = [
+    "Your smile lights up the entire universe! ✨",
+    "You're more beautiful than any sunset I've ever seen! 🌅",
+    "Your laugh is my favorite melody! 🎵",
+    "You make ordinary moments feel magical! ✨",
+    "Your kindness makes the world a better place! 🌍",
+    "You're absolutely radiant! 💫",
+    "Your intelligence amazes me every day! 🧠",
+    "You have the most beautiful soul my love! ",
+    "You're my favorite notification! 📱",
+    "You make everything better just by being you! 🌟",
+    "Your eyes sparkle brighter than all the stars combined! ⭐",
+    "You're the reason I believe in love! ✨",
+    "You feel like home! 🏠",
+    "You're more precious than any treasure! 💎",
+    "Your voice is sweeter than honey! 🎶",
+    "When you smile, my life gets better! 😊",
+    "You're the missing piece to my puzzle! 🧩",
+    "You bring sunshine to my cloudiest days! ☀️",
+    "You're really charming! 💖",
+    "You make love feel easy! 💘",
+    "Every time I see you, my heart skips a beat! 💓",
+    "You're the definition of grace and beauty! 👑",
+    "You glow even in the darkest places! ✨",
+    "You're my happiness! 🎁",
+    "You have a heart as big as the ocean! 🌊",
+    "You're more refreshing than morning dew! 🌿",
+    "Being with you feels like a dream I never want to wake up from! 💤",
+    "You're the calm in every storm! 🌈",
+    "You inspire me to be a better person every day! 🌟",
+    "You're my happy place! 🧸",
+    "You're my poetry! 📖",
+    "Your beauty makes nature jealous! 🌹",
+    "You make my heart happy! 🤍",
+    "You're sweeter than my favorite dessert! 🍰",
+    "You bring out the best in me! 🕊️",
+    "You're a living masterpiece! 🎨",
+    "You're more magical than fairy tales! 🧚",
+    "You're the reason behind my smile! 😄",
+    "You make my heart dance! 💃",
+    "You're proof that angels really exist! 😇",
+    "You light up my life! 🌃",
+    "You're my favorite hello and my hardest goodbye! 👋",
+    "You outshine the moon! 🌕",
+    "You're beautifully unique! ❄️",
+    "You're a wish I never knew I made! 🌠",
+    "You're the noor in my eyes! ✨",
+    "You give the stars a reason to shine! 🌌",
+    "You make my world colorful! 🌈",
+    "You're the reason my heart beats! ❤️",
+    "You're the cherry on top of my life! 🍒",
+    "You make every second feel special! ⏳",
+    "You’re simply unforgettable! 🧠",
+    "You're the muse behind my writings! 🎨",
+    "You're prettier than sunshine mixed with stardust! ☀️✨",
+    "You're my daily dose of joy! 💊",
+    "You're the kind of beautiful that can’t be captured in words! 📝",
+    "You make the time stop when you're near! ⏰",
+    "You're better than all my favorite things combined! 🎧",
+    "You're every reason I believe in love! 💖",
+    "You're sweeter than honey and warmer than sunshine! 🍯☀️",
+    "You're my heart's favorite rhythm! 🥁",
+    "You're the reason flowers bloom brighter! 🌸",
+    "You're the peace to my chaos! 🕊️",
+    "You're a gift I never expected but always needed! 🎁",
+    "You're the melody my soul dances to! 🎼",
+    "You're more stunning than fireworks! 🎆",
+    "You’re my calm after every storm! ☔",
+    "You're love in its purest form! 💗",
+    "You're the adventure I never want to end! 🌍",
+    "You're my star in the darkest sky! 🌟",
+    "You’re the magic in my ordinary life! ✨",
+    "You're the gentle breeze on a hot day! 🌬️",
+    "You're the sparkle I never want to lose! 💫",
+    "You're more soothing than a lullaby! 🎵",
+    "You're the smile I wait for all day! 😊",
+    "You're my reason to believe in forever! ♾️",
+    "You're the most beautiful chapter of my story! 📖",
+    "You're the warmth in my favorite memory! 🔥",
+    "You're like a song stuck in my head—but I love it! 🎶",
+    "You're the soft whisper in my loudest thoughts! 🌙",
+    "You’re the peace that fills my heart! 💖",
+    "If people were rain, I am a drizzle and you are a hurricane.! 🍀",
+    "You're the joy behind my best days! 😍",
+    "You're like a rainbow after every storm! 🌈",
+    "You're the mystery I never want to solve! 🔍",
+    "You're the scent of my favorite flower! 🌹",
+    "You're the reason I look forward to tomorrow! 🌞",
+    "You’re the softest part of my hardest days! 🤗",
+    "You’re my heart’s compass! 🧭",
+    "You're the inspiration behind every smile I wear! 😊",
+    "You're more comforting than my favorite blanket! 🛏️",
+    "You're the reason love songs make sense! 🎤",
+    "You're the calm melody in a noisy world! 🎶",
+    "You're the sparkle my heart wears proudly! 💎",
+    "You're a blessing in human form! 🙏",
+    "You're the fairy tale ending I never thought I’d find! 📚",
+    "You're the magic in every moment we share! ✨",
+    "You're the fire in my soul and the light in my eyes! 🔥"
+            ];
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            // Create floating message
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(255,255,255,0.95);
+                padding: 2rem;
+                border-radius: 20px;
+                font-size: 1.5rem;
+                color: #e91e63;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                z-index: 1000;
+                animation: fadeIn 0.5s ease-out;
+                text-align: center;
+                backdrop-filter: blur(10px);
+                max-width: 90%;
+            `;
+            messageDiv.innerHTML = randomMessage;
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.style.animation = 'fadeOut 0.5s ease-out';
+                setTimeout(() => messageDiv.remove(), 500);
+            }, 3000);
+        }
+        
+        function playMusic() {
+            // Removed - no longer needed
+        }
+
+        // Initialize time-based content on page load
+        function initializePage() {
+            updateTimeMessage();
+            updateWeather();
+            generateCompliment();
+            
+            // Update time message every minute
+            setInterval(updateTimeMessage, 60000);
+            
+            // Update weather every 30 minutes
+            setInterval(updateWeather, 1800000);
+        }
+
+        // Add sparkle effect to title
+        setInterval(() => {
+            const title = document.querySelector('.main-title');
+            title.classList.add('sparkle');
+            setTimeout(() => title.classList.remove('sparkle'), 1500);
+        }, 5000);
+
+        // Allow Enter key for secret code
+        document.getElementById('secretCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkSecretCode();
+            }
+        });
+        
+        // CSS for fadeOut animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                to { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize everything when page loads
+        window.addEventListener('load', initializePage);
+    </script>
+</body>
+</html>
