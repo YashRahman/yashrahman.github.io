@@ -2,29 +2,782 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>I MISS YOU JAAN</title>
-  <style>
-    body {
-      margin: 0;
-      background-color: #405200; /* muted olive/old-money green */
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Georgia', serif;
-    }
-
-    h1 {
-      color: #ffeba1; /* soft ivory white */
-      font-size: 5rem;
-      text-align: center;
-      letter-spacing: 2px;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Princess's Birthday!!!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>I MISS YOU TORU PAKHI</h1>
+  <style>
+    :root {
+  --pink: #ffb6d9;
+  --purple: #d6a4ff;
+  --cream: #fffaf0;
+  --gold: #ffe066;
+  --dark: #311847;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Baloo 2', cursive;
+  background: linear-gradient(145deg, var(--purple), var(--pink));
+  color: var(--cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-y: hidden; /* Initially prevent scrolling */
+}
+
+.title-container {
+  width: 100%;
+  position: relative;
+  height: 80px;
+  margin-bottom: 20px;
+  z-index: 10; /* Make sure title appears above other elements */
+}
+
+#birthdayTitle {
+  font-size: 3.5em;
+  color: var(--gold);
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50px);
+  transition: transform 1s ease, opacity 1s ease;
+  width: 100%;
+}
+
+#birthdayTitle.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+#countdown {
+  font-size: 2em;
+  margin-bottom: 1.5em;
+  background: rgba(255,255,255,0.2);
+  padding: 10px 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.gift-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  margin-bottom: 80px;
+  margin-top: 50px; /* Add margin to push gift box down from title */
+}
+
+.gift-box {
+  width: 180px;
+  height: 180px;
+  background: linear-gradient(145deg, #fffaf0, #fff0e0);
+  border-radius: 25px;
+  position: absolute;
+  top: 0;
+  left: 10px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  animation: float 3s ease-in-out infinite;
+  transition: transform 0.4s ease;
+  cursor: pointer;
+}
+
+.gift-box:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 25px;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.8), transparent);
+  pointer-events: none;
+}
+
+.gift-lid {
+  position: absolute;
+  top: -35px;
+  left: -10px;
+  width: 200px;
+  height: 45px;
+  background: linear-gradient(to bottom, #ffdb99, var(--gold));
+  border-radius: 20px 20px 5px 5px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.8s ease;
+  transform-origin: bottom center;
+}
+
+.gift-box.open .gift-lid {
+  transform: rotateX(-120deg);
+}
+
+.bow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 40px;
+  z-index: 2;
+}
+
+.bow-left, .bow-right {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: var(--pink);
+  border-radius: 50%;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+}
+
+.bow-left {
+  left: 0;
+  transform: translateX(-15px);
+}
+
+.bow-right {
+  right: 0;
+  transform: translateX(15px);
+}
+
+.bow-center {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background: #ff99cc;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255,255,255,0.8);
+  z-index: 3;
+}
+
+.ribbon {
+  position: absolute;
+  background: linear-gradient(to right, #ffcce6, var(--pink));
+}
+
+.ribbon.vertical {
+  width: 20px;
+  height: 90%; /* Reduced from 100% to avoid extending beyond the box */
+  left: 50%;
+  top: 5%; /* Added to center the ribbon */
+  transform: translateX(-50%);
+}
+
+.ribbon.horizontal {
+  height: 20px;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.sparkle {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite alternate;
+}
+
+.message-container {
+  position: relative;
+  height: 200px;
+  width: 100%;
+}
+
+#message {
+  opacity: 0;
+  background: rgba(255,255,255,0.2);
+  padding: 15px 25px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  max-width: 80%;
+  margin: 0 auto;
+  font-size: 1.8em;
+  color: var(--cream);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 50px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+#message.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.magic-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: particleRise 1.5s ease-out forwards;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  animation: confettiFall 5s ease-in-out forwards;
+  z-index: -1;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(1deg); }
+}
+
+@keyframes particleRise {
+  0% { 
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% { 
+    opacity: 0;
+    transform: translate(0, -150px) scale(0.2);
+  }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.5); }
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.inner-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 25px;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.gift-box.open .inner-glow {
+  opacity: 1;
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.8; }
+}
+
+/* Special dates section styling */
+.special-dates-section {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 100px;
+  padding: 20px;
+  display: none; /* Initially hidden */
+}
+
+.special-date-item {
+  margin-bottom: 60px;
+  padding: 20px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.special-date-item h2 {
+  color: var(--gold);
+  margin-bottom: 15px;
+  font-size: 2.2em;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.stopwatch {
+  font-size: 1.8em;
+  background: rgba(255,255,255,0.2);
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  color: var(--cream);
+  font-weight: bold;
+}
+
+.date-description {
+  font-size: 1.5em;
+  line-height: 1.5;
+  color: var(--cream);
+  padding: 10px;
+  min-height: 60px;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  width: 100%;
+  overflow-wrap: break-word;
+}
+
+
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: bounce 2s infinite;
+  color: var(--gold);
+  font-size: 2em;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) translateX(-50%);
+  }
+  40% {
+    transform: translateY(-20px) translateX(-50%);
+  }
+  60% {
+    transform: translateY(-10px) translateX(-50%);
+  }
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  #birthdayTitle {
+    font-size: 2.5em;
+  }
+
+  #countdown {
+    font-size: 1.5em;
+    padding: 8px 15px;
+  }
+
+  .gift-container {
+    transform: scale(0.9);
+    margin-bottom: 60px;
+  }
+
+  #message {
+    font-size: 1.5em;
+    padding: 12px 20px;
+  }
+  
+  .special-date-item h2 {
+    font-size: 1.8em;
+  }
+  
+  .stopwatch {
+    font-size: 1.5em;
+  }
+}
+
+@media (max-width: 480px) {
+  #birthdayTitle {
+    font-size: 2em;
+  }
+
+  #countdown {
+    font-size: 1.2em;
+    padding: 6px 12px;
+  }
+
+  .gift-container {
+    transform: scale(0.8);
+    margin-bottom: 40px;
+  }
+
+  #message {
+    font-size: 1.2em;
+    padding: 10px 15px;
+  }
+  
+  .special-date-item h2 {
+    font-size: 1.5em;
+  }
+  
+  .stopwatch {
+    font-size: 1.2em;
+  }
+  
+  .date-description {
+    font-size: 1em;
+  }
+}
+
+.large-infinity {
+  font-size: 4em;
+}
+  </style>
+  <div class="title-container">
+    <h1 id="birthdayTitle">🎂🎉 Happy Birthday My Love! 🎉🎂</h1>
+  </div>
+  <div id="scrollIndicator" class="scroll-indicator" style="opacity: 0;">↓</div>
+  
+  <div id="countdown">Loading countdown...</div>
+
+  <div class="gift-container">
+    <div class="gift-box" id="giftBox">
+      <div class="gift-lid"></div>
+      <div class="bow">
+        <div class="bow-left"></div>
+        <div class="bow-right"></div>
+        <div class="bow-center"></div>
+      </div>
+      <div class="ribbon vertical"></div>
+      <div class="ribbon horizontal"></div>
+      <div class="inner-glow"></div>
+    </div>
+  </div>
+
+  <div class="message-container">
+    <div id="message">
+      <strong>🎁&#128151 Surprise Jaan Pakhiii &#128151🎁</strong><br />
+      
+    </div>
+  </div>
+  
+  <div id="special-dates" class="special-dates-section">
+    <div class="special-date-item">
+      <h2>The Day We First Met
+        <br> [ 11th February 2025, 9:30PM ]
+      </h2>
+      <div class="stopwatch" id="stopwatch1"></div>
+      <p class="date-description " data-text="">First jkhn dekhsi tomake chagol gular sathe, ami toh tkhni tmr upor fall koira boshchilam. Onk beshi beshi cute lagtesilo, ar etto pretty lagtesilo, mashallah. Ami jiboneo bhabi nai, ami eto beshi bhalobashbo kaoke. Love at first sight toh dure thak, amar cousins, friends — shobai jane ei love-tove amar jinish na. Kintu tomake dekhar pore amar mathay kichui chilo na. Mone hoilo, "Dhur, tomake judi haray feli, shara jibon nijeke gali dite thakbo." Tai eto shahosh koira Insta chaisilam. Naile etodin kandtei thaktam.
+        Tomake first dekhar sathe sathei mone hoisilo — we are made for each other. Bisshash koro. Erokom pochondo jibone kaoke kori nai, ar korbo o na. Sudhu tomakei korsi, ar sharajibon tomakei korbo.
+        Crush chilo na. Crush er feelings eto strong hoy na. Tomar sathe jeta feel kortesilam, oita... Allah er kosom, karo sathe feel kori nai, ar jibone karo sathe korbo o na — tumi chara. <br> <b>I Love You. &#128151</b> </p>
+    </div>
+    
+    <div class="special-date-item">
+      <h2>The Day I Confessed My Feelings
+        <br> [ 12th March 2025, 1:43AM ]
+    </h2>
+      <div class="stopwatch" id="stopwatch2"></div>
+      <p class="date-description typewriter" data-text="">Astagfirullah, amar jibon er shobche kharap raat. Ami ar jiboneo ei raat experience korte chai na.
+        Ekta reel er jonno tumi amake ekta question korte chaila, jeta amake answer ditei hobe — ar mittha o bola jabena. Tumi jiggesha korsila, "Notes kar jonno daw?"
+        Allah re! Gola shukhay gesilo ei text poira. Tokhon mone hoisilo, "Ajkei bole dei shob kichu."
+        Allah er naam niye ami onekta boilao disilam — je, I have feelings for you (indirectly).
+        Tmr tokhon feelings chilo naki, jani na, tai ami dhoirai nisilam shob shesh. Akhn block khabo — ar amar love story, story e thakbe.
+        Bura hoye, guitar bajaite bajaite, amar biral er sathe oi chhoto ghor e tomar kotha mone koira kandbo, kobita and poetry likhbo, ar dukkho koster gaan gabo — ei plan o koira felsilam.
+        Kintu dekhlam, tumi block daoni. Tao bhoy lagtesilo.
+        Tao mone hoitesilo, maybe amake ignore korba.
+        But amon kichu hoy nai — Alhamdulillah.
+        Ami onek khushi, oidin raat e tumi amake chance diso, ar ami Allah er kacheo shob shomoy onek kritoggo(grateful) tmr jonno. Tomake haraite chai nah kokhonoi. <br> <b>I Love You. &#128151</b> </p>
+    </div>
+    
+    <div class="special-date-item">
+      <h2>The Day You Said "I Love You" For The First Time
+        <br> [ 31st march 2025, 9:37AM ]
+      </h2>
+      <div class="stopwatch" id="stopwatch3"></div>
+      <p class="date-description typewriter" data-text="">Jaan, ei Eid amar life er best Eid hoise. Ei Eid best howar ek matro karon hoccho tumi ar tumi. This was our first Eid together, and I pray to Allah that amar jibone ar joto Eid ase, shob gula tmr sathei kataite chai — In-sha-Allah.
+        Tumi aso amar sathe, ar sharajibon thakba amar sathe — eita chinta korlei toh protidin e Eid er moto lage.
+        Amar still ekdom vividly mone ase, Eid er din shokal bela 7 tar dige I said I love you for the first time, namaj porte jawar age. Eitai likha gesilam. Tarpor namaj sesh kore dekhlam apni apnr pic dilen — bheja chul e ready hoye, Mashallah. Eid er din o Eid er chaad dekhsi, amar chaad dekhsi — the love of my life, the prettiest of all.
+        Then pic dewar ektu porei, apni baire jawar age kotha boltesilam amra. Apni hotat koira I love you bolsenn — ahhhhh! Tkhn shokal 9:37 — ami time likha rakhsilam. Onk special lagtesilo amar. Lojja lagtesilo, kintu onk bhalo o lagtesilo tmr mukh e I love you shunar porrrr.
+        Eid er din sharadin glow korsi, diamond er moto ekdom.
+        <br><b>I Love You. &#128151</b></p>
+    </div>
+    
+    <div class="special-date-item">
+      <h2>We Have Been Together For
+        <br>[ 30th April 2025, 10AM ]
+      </h2>
+      <div class="stopwatch" id="stopwatch4"></div>
+      <p class="date-description typewriter" data-text="">I have a feeling je ei paragraph ta onk boro hoya jabe, amar feelings express korte korte. Kkhoni boli na amar dewa paragraphs gula purata porte, but ajk bolbo, atleast ei last er paragraph ta hoileo poiro. Onk kosto hoise ei pura website and eto gula paragraphs likhte. Tumi porle bhalo lagto. Accha, it's been a whole month since we have been together, Alhamdulillah. Jaan, I want to spend the rest of my life together. I want to spend the rest of my life with you, no matter what happens. Ami jani nah tumi chinta koro naki, kintu ami kori, and ami shotti e biye korte chai tomake, jaan. And tumi judi raji thako, biye korbo o tomake. Jmnei hok, chinta koiro nah. Sharajibon eksathe thakbo ar kono jhamela hobe nah amader moddhe, Ektu obastob. Tao Allah nah koruk, judi hoy e jhamela amader majkhane, amra duijon kkhono ekjon arekjon ke charbo nah, accha? Amra kotha boila, communicate koira, solve koira felbo, Inshallah. Ami toh tomake chaira kkhonoi jabo nah. Tumio please amake chaira jaio nah, jaan. Onk kosto hobe amar, tomake chara judi baicha o thaki, normal toh thakte parbo nah, that's for sure. Amader biyer pore, judi amader moddhe karo age mara jaite hoy, ami dua kori jate ami age mara jai. Karon amar age amar chokh er samne tmr kichu hoile, ami toh tkhni sesh hoya jabo. :) Shuina cringe lagbe maybe tmr ektu, amaro likhte lagtese halka. Kintu shotti kotha eita ekdom. Without you, amr baicha thaka does not make sense. You are my everything. (Another shundor sentence nibba nibbi ra nosto koira felse, cringe banay felse arki.) But ami poetic way te bollam. You are the kind of love, jeta niye kobi ra kobita likhe. You are the kind of beautiful, jeta niye artists ra draw kore. You are perfect, my love, promise, ekdom 100 100 perfect. Ar tmr judi tao mone hoy je tmr moddhe imperfections ase, thakuk. Amar jonno oitai perfection. Amr lagbe amar tory ke, akhn tory jemoni hok. Allah maf koruk, Astagfirullah, Tauba Tauba. Kintu jaan, tumi judi kotha bolte o na paro, I will still love you, even aro beshi bhalobashbo, jate tmr kkhono nije ke alada na mone hoy. Ar shuno, biyer pore, biyer age, kono din o ami tmr sathe kharap behave korbo nah. Don't worry. Hoyto rag korte pari, mon kharap hoite pare, kintu tomake kkhono kichu kharap bolbo nah. Tmr gali bhalo lage nah. Ami gali dei o nah akhn, and also, tmr samne o kkhono gali dibo nah. Chinta koiro nah. Tmr jeta bhalo lage nah, oita korbo nah. And tumi ekbar ki jani reel disila, onk kharap lagsilo. Reel e ekta chele or wife/girlfriend ke marsilo, ar tumi bolsila, "Yash, ami mair khawar moto kono kaj korbo nah kkhono." Onk kosto lagsilo, jaan. Eita poira amar upor etotuk bisshash nai? Tao boli, ami kkhonoi tomake hurt korbo nah, jaan. :) Shuno, dorkar porle biyer din certificate e sign koira dibo. Nijer upor bisshash ase amr. Yash ar jai hok, tmr gaye hath dibe nah kono din o. Moira jabo, kintu tory er kichu hoite dibo nah. Amr shob tumi. Kicchu korbo nah, kkhono kicchu hoiteo dibo nah, tmr konodin. Baccha jmne chocolate lukay, jotno koira rakhe, same tomakeo ami onk jotno koira rakhbo. Agle rakhbo apnake, ma'am, shob smy. Ja chaben, ene hajir kore dibo. (Abr koti takar kichu chaio nah, oita kothin hoya jabe onk.) Apnake shob diye, ekdom nosto koira felbo hehe, but bhalo wala nosto. Baap maa baccha der chocolates diya jeta kore arki. Onk care korbo re, tmr. Chinta koiro nah. Nijer thike beshi care koirai rakhbo, eita confirmed. Barir ekmatro bou hoben, emnei care chara rakha jabe naki, bolen? Shob kora hobe apnr jonno. Apni happy thaklei hoilo amar. Anyways, bapre bap, bishal hoya gese. Jiboneo tumi porba nah eita purata lol. Last e bolbo, we are gonna stay togather forever. Fid-Dunya Wal-Akhirah, In-Sha-Allah. Jannat e gach lagaite bolbo ne Allah ke. Amar jonno ekta, oitar niche boisha boisha, golpo korbo ne amra eksathe. Deal! I love you, tory, and I am serious. I love you allotttt, mane actually pagol tmr jonno ami. Ar hea shuno, ami je koydin bachbo, tomakei bhalobashbo. Tomake chara ar onno keo nah, kotha dilam. Allah shakkhi.
+<br><b>&#128151 Jaan pakhiii &#128151</b>
+<br><b>&#128151 My princess &#128151</b>
+<br><b>&#128151 My chaad &#128151</b>
+<br><b>&#128151 My koliza &#128151</b>
+<br><b>&#128151 My jaan &#128151</b>
+<br><b>&#128151 My dreams &#128151</b>
+<br><b>&#128151 My world &#128151</b>
+<br><b>&#128151 My everything &#128151</b></p>
+    </div>
+    
+    <div class="special-date-item">
+      <h2>We Will Stay Together Till
+        <br>[ Fid-Dunya Wal-Akhirah ♥ ]
+      </h2>
+      <div class="stopwatch" id="stopwatch5"></div>
+      <p class="date-description typewriter" data-text=""></p>
+    </div>
+  </div>
+
+  <script>
+    // Get all elements
+    const countdownEl = document.getElementById('countdown');
+    const giftBox = document.getElementById('giftBox');
+    const message = document.getElementById('message');
+    const birthdayTitle = document.getElementById('birthdayTitle');
+    const specialDatesSection = document.getElementById('special-dates');
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    
+    // Set target date
+    const targetDate = new Date('2020-05-04T00:00:00');
+    
+    // For testing, uncomment the next line to make the box open immediately
+    // const targetDate = new Date(Date.now());
+    
+    // Intersection Observer for typewriter effect
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5
+    };
+    
+
+    function updateCountdown() {
+      const now = new Date();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        countdownEl.style.display = 'none';
+        openBox();
+        return;
+      }
+
+      const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownEl.textContent = `${d}d ${h}h ${m}m ${s}s`;
+    }
+
+    // Create sparkles around the box
+    function createSparkles() {
+      const giftContainer = document.querySelector('.gift-container');
+      for (let i = 0; i < 12; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('sparkle');
+        
+        // Set size
+        const size = Math.random() * 20 + 2;
+        sparkle.style.width = size + 'px';
+        sparkle.style.height = size + 'px';
+        
+        // Position around the box
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 120 + Math.random() * 60;
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        
+        sparkle.style.left = `calc(50% + ${x}px)`;
+        sparkle.style.top = `calc(50% + ${y}px)`;
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        
+        giftContainer.appendChild(sparkle);
+      }
+    }
+
+    function createConfetti() {
+  const colors = ['#ffb6d9', '#d6a4ff', '#ffe066', '#a4ffea', '#ff99cc'];
+  const documentHeight = Math.max(document.body.scrollHeight, document.body.offsetHeight, 
+                                document.documentElement.clientHeight, document.documentElement.scrollHeight, 
+                                document.documentElement.offsetHeight);
+  
+  // Create more confetti for a fuller effect
+  for (let i = 0; i < 150; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      
+      // Random color from our color palette
+      confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+      
+      // Random horizontal position across the full width
+      confetti.style.left = Math.random() * 100 + 'vw';
+      
+      // Start from top of the viewport
+      confetti.style.top = '-20px';
+      
+      // Random size between 5px and 15px
+      const size = Math.random() * 10 + 5;
+      confetti.style.width = size + 'px';
+      confetti.style.height = size + 'px';
+      
+      // Random rotation
+      const rotation = Math.random() * 360;
+      confetti.style.transform = `rotate(${rotation}deg)`;
+      
+      // Random animation duration between 4-8 seconds
+      // Longer duration means more time to reach the bottom
+      const duration = Math.random() * 4 + 4;
+      confetti.style.animationDuration = duration + 's';
+      
+      // Adjust the fall distance to ensure it reaches the bottom
+      const keyframeName = `confetti-fall-${Date.now()}-${i}`;
+      const styleSheet = document.createElement('style');
+      
+      styleSheet.textContent = `
+        @keyframes ${keyframeName} {
+          0% {
+            transform: translateY(0) rotate(${rotation}deg);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(${documentHeight}px) rotate(${rotation + 360}deg);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(styleSheet);
+      
+      confetti.style.animation = `${keyframeName} ${duration}s ease-in forwards`;
+      
+      document.body.appendChild(confetti);
+      
+      // Remove confetti after animation completes
+      setTimeout(() => {
+        document.body.removeChild(confetti);
+        document.head.removeChild(styleSheet);
+      }, duration * 1000);
+    }, i * 30);
+  }
+}
+
+    function createMagicParticles() {
+      const boxRect = giftBox.getBoundingClientRect();
+      const boxTop = boxRect.top;
+      const boxCenterX = boxRect.left + boxRect.width / 2;
+      
+      const colors = ['#ffb6d9', '#d6a4ff', '#ffe066', '#a4ffea', '#ffcce6'];
+      
+      for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+          const particle = document.createElement('div');
+          particle.classList.add('magic-particle');
+          
+          // Random size
+          const size = Math.random() * 8 + 4;
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          
+          // Position at top of box with some randomness
+          const randomOffsetX = (Math.random() - 0.5) * 30;
+          particle.style.left = (boxCenterX + randomOffsetX) + 'px';
+          particle.style.top = boxTop + 'px';
+          
+          // Random color
+          particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+          particle.style.boxShadow = `0 0 ${size}px ${particle.style.background}`;
+          
+          // Animation speed
+          particle.style.animationDuration = (Math.random() * 1 + 1) + 's';
+          
+          document.body.appendChild(particle);
+          
+          // Clean up
+          setTimeout(() => {
+            document.body.removeChild(particle);
+          }, 2000);
+        }, i * 50);
+      }
+    }
+
+    function openBox() {
+      // Open the box
+      giftBox.classList.add('open');
+      
+      // Show "Happy Birthday!" text
+      setTimeout(() => {
+        birthdayTitle.classList.add('visible');
+      }, 800);
+      
+      // Create magic particles effect
+      setTimeout(() => {
+        createMagicParticles();
+      }, 1500);
+      
+      // Show magical message
+      setTimeout(() => {
+        message.classList.add('visible');
+      }, 2000);
+      
+      // Launch confetti
+      setTimeout(() => {
+        createConfetti();
+      }, 2300);
+      
+      // Enable scrolling and show special dates section
+      setTimeout(() => {
+        document.body.style.overflowY = 'auto';
+        specialDatesSection.style.display = 'block';
+        
+        // Fade in scroll indicator
+        scrollIndicator.style.opacity = '1';
+        
+        // Initialize all stopwatches
+        initializeStopwatches();
+      }, 3000);
+    }
+    
+    // Stopwatch functionality
+    function initializeStopwatches() {
+      // Set your 5 special dates here - format: 'YYYY-MM-DDThh:mm:ss'
+      const specialDates = [
+        '2025-02-12T21:30:00', // First Met
+        '2025-03-12T01:43:00', // first feelings confessed
+        '2025-03-31T09:37:00', // first i love you by her
+        '2025-03-30T10:00:00', // We Have Been Together For
+      ];
+      
+      // Initialize each stopwatch
+      for (let i = 1; i <= 5; i++) {
+        if(i === 5){
+            document.getElementById("stopwatch5").textContent = 'INFINITY ∞';
+            document.getElementById('stopwatch5').classList.add('large-infinity');
+        } else {
+            updateStopwatch(`stopwatch${i}`, new Date(specialDates[i-1]));
+            setInterval(() => {
+              updateStopwatch(`stopwatch${i}`, new Date(specialDates[i-1]));
+            }, 1000);
+        }
+      }
+    }
+    
+    // Update stopwatch function
+    function updateStopwatch(id, startDate) {
+      const now = new Date();
+      const diff = now - startDate;
+
+      // Calculate time differences
+      const totalSeconds = Math.floor(diff / 1000);
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const totalHours = Math.floor(totalMinutes / 60);
+      const totalDays = Math.floor(totalHours / 24);
+
+      const days = totalDays;
+      const hours = totalHours % 24;
+      const minutes = totalMinutes % 60;
+      const seconds = totalSeconds % 60;
+
+      // Format the output
+      const formattedTime = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      document.getElementById(id).textContent = formattedTime;
+    }
+
+    // Initialize
+    createSparkles();
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
 </body>
 </html>
