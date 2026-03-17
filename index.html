@@ -67,7 +67,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .wish-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--rose);opacity:0.4;}
 .wish-emoji{font-size:1.6rem;margin-bottom:0.6rem;display:block;}
 .wish-name{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--amber);margin-bottom:0.4rem;}
-.wish-message{font-size:1rem;line-height:1.7;color:var(--dusty-rose);}
+.wish-message{font-size:1rem;line-height:1.7;color:var(--dusty-rose);white-space:pre-wrap;}
 .wish-date{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--mist);margin-top:0.8rem;opacity:0.7;}
 .wishes-empty{text-align:center;font-style:italic;color:var(--mist);font-size:1rem;padding:2rem;}
 .wishes-loading{text-align:center;color:var(--mist);font-style:italic;padding:1rem;}
@@ -190,7 +190,14 @@ async function loadWishes(){
   }catch(e){feed.innerHTML='<p class="wishes-empty">Couldn\'t load wishes right now 🌸</p>';}
 }
 
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escHtml(s){
+  return s
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/\n/g,'<br>'); 
+}
 
 loadWishes();
 document.fonts.ready.then(() => setTimeout(() => document.getElementById("pageLoader").classList.add("hide"), 1800));
