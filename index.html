@@ -32,6 +32,128 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .hero-divider{width:80px;height:1px;background:linear-gradient(to right,transparent,var(--rose),transparent);margin:2rem auto 0;opacity:0;animation:fadeUp 0.8s ease 0.8s forwards;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 
+/* ── COUNTDOWN ── */
+#countdownWrap{
+  max-width:520px;
+  margin:0 auto 1rem;
+  padding:0 1.5rem;
+  opacity:0;
+  animation:fadeUp 0.8s ease 0.9s forwards;
+}
+.cd-label{
+  font-size:0.72rem;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--rose);text-align:center;margin-bottom:1.1rem;
+}
+.cd-grid{
+  display:flex;justify-content:center;gap:0.6rem;flex-wrap:wrap;
+}
+.cd-unit{
+  display:flex;flex-direction:column;align-items:center;
+  min-width:68px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(201,131,106,0.22);
+  border-radius:4px;padding:0.9rem 0.5rem 0.7rem;
+  position:relative;overflow:hidden;
+}
+.cd-unit::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(201,131,106,0.08),transparent 70%);
+  pointer-events:none;
+}
+.cd-num{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,6vw,2.4rem);
+  color:var(--amber);
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+  transition:transform 0.15s ease, opacity 0.15s ease;
+}
+.cd-num.flip{transform:scale(0.85) translateY(-4px);opacity:0.3;}
+.cd-word{
+  font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:rgba(232,196,176,0.45);margin-top:0.4rem;
+}
+.cd-sep{
+  font-family:'Great Vibes',cursive;font-size:2.2rem;color:rgba(201,131,106,0.3);
+  align-self:flex-start;padding-top:0.5rem;
+}
+
+/* ── THANK YOU REVEAL ── */
+#thankYouWrap{
+  display:none;
+  max-width:580px;
+  margin:0 auto 2.5rem;
+  padding:0 1.5rem;
+  text-align:center;
+}
+#thankYouWrap.revealed{display:block;animation:thankReveal 1.4s cubic-bezier(0.22,1,0.36,1) forwards;}
+@keyframes thankReveal{
+  0%{opacity:0;transform:translateY(30px) scale(0.96);}
+  60%{opacity:1;transform:translateY(-4px) scale(1.008);}
+  100%{opacity:1;transform:translateY(0) scale(1);}
+}
+.ty-card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(212,149,106,0.0);
+  box-shadow:0 0 0 1.5px var(--amber), 0 0 40px 6px rgba(212,149,106,0.2), inset 0 0 30px rgba(212,149,106,0.04);
+  border-radius:6px;padding:3rem 2.5rem 2.5rem;
+  position:relative;overflow:hidden;
+}
+.ty-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% -10%,rgba(212,149,106,0.13),transparent 65%);
+  pointer-events:none;
+}
+.ty-ornament{
+  font-family:'Great Vibes',cursive;
+  font-size:1.6rem;color:rgba(212,149,106,0.45);
+  letter-spacing:0.08em;margin-bottom:0.2rem;
+  display:block;
+}
+.ty-headline{
+  font-family:'Great Vibes',cursive;
+  font-size:clamp(2.4rem,9vw,4rem);
+  color:var(--amber);
+  line-height:1.15;
+  margin:0.4rem 0 1.2rem;
+}
+.ty-divider{
+  width:60px;height:1px;
+  background:linear-gradient(to right,transparent,var(--rose),transparent);
+  margin:0 auto 1.4rem;
+}
+.ty-body{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:clamp(1.05rem,3vw,1.2rem);
+  color:var(--dusty-rose);
+  line-height:2;
+  max-width:420px;
+  margin:0 auto;
+  opacity:0.9;
+}
+.ty-body strong{
+  font-style:normal;
+  color:var(--amber);
+  font-weight:400;
+}
+.ty-footer{
+  margin-top:1.8rem;
+  font-family:'Great Vibes',cursive;
+  font-size:1.6rem;
+  color:var(--rose);
+  opacity:0.75;
+}
+.ty-petals{
+  font-size:1.4rem;
+  letter-spacing:0.3em;
+  margin-top:0.6rem;
+  display:block;
+  opacity:0.6;
+  animation:petalsDrift 3s ease-in-out infinite;
+}
+@keyframes petalsDrift{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+
 /* FORM CARD */
 .form-wrap{max-width:560px;margin:0 auto;padding:0 1.5rem 5rem;}
 .form-card{background:rgba(255,255,255,0.03);border:1px solid rgba(201,131,106,0.2);border-radius:4px;padding:2.5rem;position:relative;opacity:0;animation:fadeUp 0.8s ease 1s forwards;}
@@ -107,9 +229,38 @@ for(let i=0;i<12;i++){const p=document.createElement('div');p.className='petal';
 
 <div class="hero">
   <p class="hero-sub">You're Among The Trusted Few</p>
-  <h1 class="hero-title">Send Your Wish For<br>Yash & Tory ❤️🌸</h1>
+  <h1 class="hero-title">Send Your Wish For<br>Me & Tory ❤️🌸</h1>
   <p class="hero-desc">we've made it one whole beautiful year together alhamdulillah. Eikhane You Can Send A Message, A Memory, Or Just Some Love For Ussss!! — Your Wish(es) Will Be Displayed On Our Anniversary Website. 🌚💕(Oitar Link tmra paba nah guys dukkhito.)</p>
   <div class="hero-divider"></div>
+</div>
+
+<!-- ── COUNTDOWN / THANK YOU ── -->
+<div id="countdownWrap">
+  <p class="cd-label">Our Anniversary Arrives In</p>
+  <div class="cd-grid">
+    <div class="cd-unit"><span class="cd-num" id="cd-d">00</span><span class="cd-word">Days</span></div>
+    <div class="cd-sep">·</div>
+    <div class="cd-unit"><span class="cd-num" id="cd-h">00</span><span class="cd-word">Hours</span></div>
+    <div class="cd-sep">·</div>
+    <div class="cd-unit"><span class="cd-num" id="cd-m">00</span><span class="cd-word">Minutes</span></div>
+    <div class="cd-sep">·</div>
+    <div class="cd-unit"><span class="cd-num" id="cd-s">00</span><span class="cd-word">Seconds</span></div>
+  </div>
+</div>
+
+<div id="thankYouWrap">
+  <div class="ty-card">
+    <span class="ty-ornament">~ with all our love ~</span>
+    <h2 class="ty-headline">Thank You,<br>From The Bottom<br>Of Our Hearts</h2>
+    <div class="ty-divider"></div>
+    <p class="ty-body">
+      One year. Three hundred and sixty five days of choosing each other. ❤️ <br><br>
+      Every single wish you left here means more than words can hold. You took a moment out of your day to pour love into ours, and we will carry this love with us, <strong>always.</strong><br><br>
+      To everyone who wrote something, funny, heartfelt, chaotic, or just anything at all. thank you for being part of our story. This anniversary isn't just ours to celebrate you guys are a part of it aswell ❤️
+    </p>
+    <p class="ty-footer">— Yash &amp; Tory, March 30 ❤️</p>
+    <span class="ty-petals">🌸 ✨ 🌸 ✨ 🌸</span>
+  </div>
 </div>
 
 <div class="form-wrap">
@@ -120,8 +271,7 @@ for(let i=0;i<12;i++){const p=document.createElement('div');p.className='petal';
     </div>
     <div class="field">
       <label>Your Wish For Ussss ❤️</label>
-      <textarea id="guestMessage" placeholder="Write something from the heart — a wish, a memory, a joke, or just anything you wish
-       messages cannot be deleted once sent"></textarea>
+      <textarea id="guestMessage" placeholder="Write something from the heart — a wish, a memory, a joke, or just anything you wish&#10;       messages cannot be deleted once sent"></textarea>
     </div>
     <span class="emoji-label">Pick A Vibe</span>
     <div class="emoji-grid" id="emojiGrid">
@@ -151,6 +301,7 @@ for(let i=0;i<12;i++){const p=document.createElement('div');p.className='petal';
 <footer>Yash & Tory — From March 30, 2025 to Forever ❤️🌸</footer>
 
 <script>
+/* ── SUPABASE ── */
 const SUPABASE_URL = 'https://dnawslmeqkcqiyrqyafj.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRuYXdzbG1lcWtjcWl5cnF5YWZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2NjE3MDcsImV4cCI6MjA4NjIzNzcwN30.1DKTCy4OlS-gRAjGIWnwnOav3LIzTeUeLw-q3c33wKw';
 
@@ -186,7 +337,6 @@ async function submitWish(){
       btn.textContent='Wish sent! 💕';
       setTimeout(()=>{btn.disabled=false;btn.textContent='Send my wish 🌸';},3000);
       loadWishes();
-document.fonts.ready.then(() => setTimeout(() => document.getElementById("pageLoader").classList.add("hide"), 1800));
     } else {
       btn.disabled=false;btn.textContent='Try again 🌸';
     }
@@ -236,7 +386,49 @@ function escHtml(s){
     .replace(/\n/g,'<br>'); 
 }
 
+/* ── COUNTDOWN ── */
+const TARGET = new Date('2026-03-30T00:00:00');   // midnight, local time
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function animFlip(el, newVal){
+  if(el.textContent === newVal) return;
+  el.classList.add('flip');
+  setTimeout(()=>{ el.textContent = newVal; el.classList.remove('flip'); }, 160);
+}
+
+function tick(){
+  const now  = new Date();
+  const diff = TARGET - now;
+
+  if(diff <= 0){
+    // Time's up — show thank-you, hide countdown
+    document.getElementById('countdownWrap').style.display = 'none';
+    const ty = document.getElementById('thankYouWrap');
+    if(!ty.classList.contains('revealed')){
+      ty.style.display = 'block';
+      // small delay so display:block paints first
+      requestAnimationFrame(()=> requestAnimationFrame(()=> ty.classList.add('revealed')));
+    }
+    return; // stop ticking
+  }
+
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000)  / 60000);
+  const s = Math.floor((diff % 60000)    / 1000);
+
+  animFlip(document.getElementById('cd-d'), pad(d));
+  animFlip(document.getElementById('cd-h'), pad(h));
+  animFlip(document.getElementById('cd-m'), pad(m));
+  animFlip(document.getElementById('cd-s'), pad(s));
+
+  setTimeout(tick, 1000);
+}
+
+/* ── INIT ── */
 loadWishes();
+tick();
 document.fonts.ready.then(() => setTimeout(() => document.getElementById("pageLoader").classList.add("hide"), 1800));
 </script>
 </body>
