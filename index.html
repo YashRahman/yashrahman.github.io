@@ -3,352 +3,378 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leave A Wish ❤️</title>
+<title>Leave a Wish for Tory 🎁</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎀</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--cream:#f5ede0;--rose:#c9836a;--dusty-rose:#e8c4b0;--deep:#1e1008;--warm-brown:#5c3520;--amber:#d4956a;--mist:#8fa89a;--night:#0d0805;}
+/* ══ VARIABLES ══ */
+:root{
+  --cream:#f8eef4; --rose:#d4607a; --dusty:#f0bfcc; --deep:#1a0810;
+  --warm:#5c1a28; --amber:#e8856a; --night:#0e050a; --mist:#a87888;
+  --gold:#d4956a; --lav:#c9a8d4;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--night);color:var(--dusty-rose);font-family:'EB Garamond',serif;min-height:100vh;overflow-x:hidden;}
-#pageLoader{position:fixed;inset:0;z-index:99999;background:var(--night);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;transition:opacity .6s ease,visibility .6s ease;}
+body{
+  background:var(--night); color:var(--dusty);
+  font-family:'EB Garamond',serif; min-height:100vh; overflow-x:hidden;
+}
+
+/* noise */
+body::before{
+  content:'';position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* ══ LOADER ══ */
+#pageLoader{
+  position:fixed;inset:0;z-index:99999;background:var(--night);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;
+  transition:opacity .7s ease,visibility .7s ease;
+}
 #pageLoader.hide{opacity:0;visibility:hidden;pointer-events:none;}
-.pl-name{font-family:'Great Vibes',cursive;font-size:clamp(2.5rem,10vw,5rem);color:var(--rose);animation:plPulse 1.5s ease infinite;}
-@keyframes plPulse{0%,100%{opacity:.4;transform:scale(.97);}50%{opacity:1;transform:scale(1);}}
-.pl-bar{width:160px;height:2px;background:rgba(201,131,106,.15);border-radius:100px;overflow:hidden;margin-top:1rem;}
-.pl-fill{height:100%;background:linear-gradient(to right,var(--rose),var(--amber));border-radius:100px;animation:plFill 1.8s ease forwards;}
+.pl-name{font-family:'Great Vibes',cursive;font-size:clamp(2.8rem,11vw,5.5rem);color:var(--rose);animation:plPulse 1.6s ease infinite;}
+@keyframes plPulse{0%,100%{opacity:.35;transform:scale(.96);}50%{opacity:1;transform:scale(1);}}
+.pl-bar{width:160px;height:2px;background:rgba(212,96,122,.15);border-radius:100px;overflow:hidden;}
+.pl-fill{height:100%;background:linear-gradient(to right,var(--rose),var(--amber));border-radius:100px;animation:plFill 1.9s ease forwards;}
 @keyframes plFill{0%{width:0%}100%{width:100%}}
-.pl-sub{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(232,196,176,.4);font-style:italic;}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.4;}
+.pl-sub{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(240,191,204,.35);font-style:italic;}
 
-/* PETALS */
-.petal{position:fixed;width:8px;height:12px;background:radial-gradient(ellipse,#e8c4b044,#c9836a22);border-radius:50% 0 50% 0;pointer-events:none;z-index:100;animation:fall linear infinite;opacity:0;}
-@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0;}8%{opacity:0.6;}90%{opacity:0.2;}100%{transform:translateY(110vh) rotate(720deg) translateX(50px);opacity:0;}}
+/* ══ PETALS ══ */
+.petal{
+  position:fixed;pointer-events:none;z-index:100;
+  font-size:13px;opacity:0;animation:fall linear infinite;
+}
+@keyframes fall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:0;}
+  8%{opacity:.65;}90%{opacity:.2;}
+  100%{transform:translateY(110vh) rotate(720deg) translateX(50px);opacity:0;}
+}
 
-/* HERO */
-.hero{text-align:center;padding:5rem 2rem 3rem;position:relative;}
-.hero-sub{font-size:0.78rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--rose);margin-bottom:1rem;opacity:0;animation:fadeUp 0.8s ease 0.2s forwards;}
-.hero-title{font-family:'Great Vibes',cursive;font-size:clamp(3rem,12vw,6rem);color:var(--amber);line-height:1.1;opacity:0;animation:fadeUp 0.8s ease 0.4s forwards;}
-.hero-desc{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3vw,1.25rem);color:var(--dusty-rose);max-width:480px;margin:1.5rem auto 0;line-height:1.9;opacity:0;animation:fadeUp 0.8s ease 0.6s forwards;opacity:0.8;}
-.hero-divider{width:80px;height:1px;background:linear-gradient(to right,transparent,var(--rose),transparent);margin:2rem auto 0;opacity:0;animation:fadeUp 0.8s ease 0.8s forwards;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+/* ══ HERO ══ */
+.hero{text-align:center;padding:5rem 1.5rem 2.5rem;position:relative;}
+.hero-eyebrow{
+  font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--rose);margin-bottom:1rem;
+  opacity:0;animation:fadeUp .8s ease .2s forwards;
+}
+.hero-title{
+  font-family:'Great Vibes',cursive;font-size:clamp(3rem,13vw,6.5rem);
+  color:var(--amber);line-height:1.1;
+  opacity:0;animation:fadeUp .8s ease .45s forwards;
+}
+.hero-name{
+  font-family:'Great Vibes',cursive;font-size:clamp(3.8rem,16vw,8rem);
+  color:var(--rose);line-height:1;display:block;
+  text-shadow:0 0 50px rgba(212,96,122,.4);
+}
+.hero-desc{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(1rem,3vw,1.2rem);color:var(--dusty);
+  max-width:460px;margin:1.6rem auto 0;line-height:2;
+  opacity:0;animation:fadeUp .8s ease .7s forwards;opacity:.8;
+}
+.hero-divider{
+  width:70px;height:1px;
+  background:linear-gradient(to right,transparent,var(--rose),transparent);
+  margin:2rem auto 0;opacity:0;animation:fadeUp .8s ease .9s forwards;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 
-/* ── COUNTDOWN ── */
+/* ══ COUNTDOWN ══ */
 #countdownWrap{
-  max-width:520px;
-  margin:0 auto 1rem;
-  padding:0 1.5rem;
-  opacity:0;
-  animation:fadeUp 0.8s ease 0.9s forwards;
+  max-width:480px;margin:0 auto 1rem;padding:0 1.5rem;
+  opacity:0;animation:fadeUp .8s ease 1s forwards;
 }
-.cd-label{
-  font-size:0.72rem;letter-spacing:0.28em;text-transform:uppercase;
-  color:var(--rose);text-align:center;margin-bottom:1.1rem;
-}
-.cd-grid{
-  display:flex;justify-content:center;gap:0.6rem;flex-wrap:wrap;
-}
+.cd-label{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--rose);text-align:center;margin-bottom:1rem;}
+.cd-grid{display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;}
 .cd-unit{
-  display:flex;flex-direction:column;align-items:center;
-  min-width:68px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(201,131,106,0.22);
-  border-radius:4px;padding:0.9rem 0.5rem 0.7rem;
-  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;min-width:64px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(212,96,122,.2);
+  border-radius:4px;padding:.85rem .5rem .65rem;position:relative;overflow:hidden;
 }
 .cd-unit::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(201,131,106,0.08),transparent 70%);
+  background:radial-gradient(ellipse at 50% 0%,rgba(212,96,122,.07),transparent 70%);
   pointer-events:none;
 }
 .cd-num{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.8rem,6vw,2.4rem);
-  color:var(--amber);
-  line-height:1;
-  font-variant-numeric:tabular-nums;
-  transition:transform 0.15s ease, opacity 0.15s ease;
+  font-family:'Playfair Display',serif;font-size:clamp(1.8rem,6vw,2.4rem);
+  color:var(--amber);line-height:1;font-variant-numeric:tabular-nums;
+  transition:transform .15s ease,opacity .15s ease;
 }
-.cd-num.flip{transform:scale(0.85) translateY(-4px);opacity:0.3;}
-.cd-word{
-  font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;
-  color:rgba(232,196,176,0.45);margin-top:0.4rem;
-}
-.cd-sep{
-  font-family:'Great Vibes',cursive;font-size:2.2rem;color:rgba(201,131,106,0.3);
-  align-self:flex-start;padding-top:0.5rem;
-}
+.cd-num.flip{transform:scale(.85) translateY(-4px);opacity:.25;}
+.cd-word{font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,191,204,.38);margin-top:.4rem;}
+.cd-sep{font-family:'Great Vibes',cursive;font-size:2rem;color:rgba(212,96,122,.28);align-self:flex-start;padding-top:.5rem;}
 
-/* ── THANK YOU REVEAL ── */
-#thankYouWrap{
-  display:none;
-  max-width:580px;
-  margin:0 auto 2.5rem;
-  padding:0 1.5rem;
-  text-align:center;
+/* ══ FORM ══ */
+.form-wrap{max-width:560px;margin:0 auto;padding:0 1.2rem 5rem;}
+.form-card{
+  background:rgba(255,255,255,.03);border:1px solid rgba(212,96,122,.18);
+  border-radius:6px;padding:2.2rem 2rem;position:relative;
+  opacity:0;animation:fadeUp .8s ease 1.1s forwards;
 }
-#thankYouWrap.revealed{display:block;animation:thankReveal 1.4s cubic-bezier(0.22,1,0.36,1) forwards;}
-@keyframes thankReveal{
-  0%{opacity:0;transform:translateY(30px) scale(0.96);}
-  60%{opacity:1;transform:translateY(-4px) scale(1.008);}
-  100%{opacity:1;transform:translateY(0) scale(1);}
-}
-.ty-card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(212,149,106,0.0);
-  box-shadow:0 0 0 1.5px var(--amber), 0 0 40px 6px rgba(212,149,106,0.2), inset 0 0 30px rgba(212,149,106,0.04);
-  border-radius:6px;padding:3rem 2.5rem 2.5rem;
-  position:relative;overflow:hidden;
-}
-.ty-card::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% -10%,rgba(212,149,106,0.13),transparent 65%);
+.form-card::before{
+  content:'';position:absolute;inset:0;border-radius:6px;
+  background:radial-gradient(ellipse at 30% 0%,rgba(212,96,122,.05),transparent 60%);
   pointer-events:none;
 }
-.ty-ornament{
-  font-family:'Great Vibes',cursive;
-  font-size:1.6rem;color:rgba(212,149,106,0.45);
-  letter-spacing:0.08em;margin-bottom:0.2rem;
-  display:block;
+.fc-title{
+  font-family:'Great Vibes',cursive;font-size:clamp(1.8rem,6vw,2.6rem);
+  color:var(--rose);margin-bottom:1.4rem;
 }
-.ty-headline{
-  font-family:'Great Vibes',cursive;
-  font-size:clamp(2.4rem,9vw,4rem);
-  color:var(--amber);
-  line-height:1.15;
-  margin:0.4rem 0 1.2rem;
+.field{margin-bottom:1.4rem;}
+.field label{display:block;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-bottom:.55rem;}
+.field input,.field textarea{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid rgba(212,96,122,.22);padding:.78rem 1rem;
+  font-family:'EB Garamond',serif;font-size:1rem;color:var(--dusty);
+  outline:none;border-radius:3px;transition:border-color .3s;resize:none;
+  -webkit-appearance:none;
 }
-.ty-divider{
-  width:60px;height:1px;
-  background:linear-gradient(to right,transparent,var(--rose),transparent);
-  margin:0 auto 1.4rem;
-}
-.ty-body{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:clamp(1.05rem,3vw,1.2rem);
-  color:var(--dusty-rose);
-  line-height:2;
-  max-width:420px;
-  margin:0 auto;
-  opacity:0.9;
-}
-.ty-body strong{
-  font-style:normal;
-  color:var(--amber);
-  font-weight:400;
-}
-.ty-footer{
-  margin-top:1.8rem;
-  font-family:'Great Vibes',cursive;
-  font-size:1.6rem;
-  color:var(--rose);
-  opacity:0.75;
-}
-.ty-petals{
-  font-size:1.4rem;
-  letter-spacing:0.3em;
-  margin-top:0.6rem;
-  display:block;
-  opacity:0.6;
-  animation:petalsDrift 3s ease-in-out infinite;
-}
-@keyframes petalsDrift{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-
-/* FORM CARD */
-.form-wrap{max-width:560px;margin:0 auto;padding:0 1.5rem 5rem;}
-.form-card{background:rgba(255,255,255,0.03);border:1px solid rgba(201,131,106,0.2);border-radius:4px;padding:2.5rem;position:relative;opacity:0;animation:fadeUp 0.8s ease 1s forwards;}
-.form-card::before{content:'';position:absolute;inset:0;border-radius:4px;background:radial-gradient(ellipse at 30% 0%,rgba(201,131,106,0.06),transparent 60%);pointer-events:none;}
-.field{margin-bottom:1.5rem;}
-.field label{display:block;font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--rose);margin-bottom:0.6rem;}
-.field input,.field textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,131,106,0.25);padding:0.8rem 1rem;font-family:'EB Garamond',serif;font-size:1rem;color:var(--dusty-rose);outline:none;border-radius:2px;transition:border-color 0.3s;resize:none;}
 .field input:focus,.field textarea:focus{border-color:var(--rose);}
-.field input::placeholder,.field textarea::placeholder{color:rgba(232,196,176,0.3);font-style:italic;}
-.field textarea{min-height:120px;line-height:1.7;}
+.field input::placeholder,.field textarea::placeholder{color:rgba(240,191,204,.28);font-style:italic;}
+.field textarea{min-height:110px;line-height:1.7;}
 
-/* EMOJI PICKER */
-.emoji-label{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--rose);margin-bottom:0.6rem;display:block;}
-.emoji-grid{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;}
-.emoji-opt{width:44px;height:44px;background:rgba(255,255,255,0.04);border:1px solid rgba(201,131,106,0.2);border-radius:4px;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.emoji-opt:hover{border-color:var(--rose);background:rgba(201,131,106,0.1);}
-.emoji-opt.selected{border-color:var(--amber);background:rgba(212,149,106,0.2);transform:scale(1.1);}
+/* emoji */
+.emoji-label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-bottom:.55rem;display:block;}
+.emoji-grid{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.4rem;}
+.emoji-opt{
+  width:42px;height:42px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(212,96,122,.18);border-radius:4px;
+  font-size:1.25rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .18s;-webkit-tap-highlight-color:transparent;
+}
+.emoji-opt:hover,.emoji-opt:active{border-color:var(--rose);background:rgba(212,96,122,.12);}
+.emoji-opt.selected{border-color:var(--amber);background:rgba(232,133,106,.18);transform:scale(1.1);box-shadow:0 0 12px rgba(232,133,106,.25);}
 
-/* SUBMIT */
-.submit-btn{width:100%;background:transparent;border:1px solid var(--rose);color:var(--rose);font-family:'EB Garamond',serif;font-size:1rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.9rem;cursor:pointer;border-radius:2px;transition:all 0.3s;position:relative;overflow:hidden;}
-.submit-btn::before{content:'';position:absolute;inset:0;background:var(--rose);transform:translateX(-100%);transition:transform 0.3s ease;z-index:-1;}
-.submit-btn:hover{color:var(--cream);}
-.submit-btn:hover::before{transform:translateX(0);}
-.submit-btn:disabled{opacity:0.5;cursor:not-allowed;}
-.submit-msg{text-align:center;margin-top:1rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;color:var(--amber);opacity:0;transition:opacity 0.4s;}
+/* submit */
+.submit-btn{
+  width:100%;padding:.9rem;
+  background:linear-gradient(135deg,var(--rose),var(--amber));
+  border:none;border-radius:4px;color:white;
+  font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;
+  letter-spacing:.08em;cursor:pointer;
+  transition:opacity .2s,transform .2s;
+  box-shadow:0 4px 20px rgba(212,96,122,.3);
+}
+.submit-btn:hover{opacity:.88;transform:translateY(-1px);}
+.submit-btn:active{transform:scale(.98);}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.submit-msg{
+  text-align:center;font-style:italic;font-size:.9rem;
+  color:var(--rose);margin-top:.9rem;opacity:0;transition:opacity .4s;
+}
 .submit-msg.show{opacity:1;}
 
-/* WISHES FEED */
-.wishes-section{max-width:560px;margin:2rem auto 0;padding:0 1.5rem;}
-.wishes-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;color:var(--cream);margin-bottom:1.5rem;text-align:center;}
-.wishes-title span{color:var(--rose);}
-.wish-card{background:rgba(255,255,255,0.03);border:1px solid rgba(201,131,106,0.15);padding:1.5rem;margin-bottom:1rem;border-radius:2px;animation:fadeUp 0.5s ease forwards;opacity:0;position:relative;}
-.wish-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--rose);opacity:0.4;}
-.wish-emoji{font-size:1.6rem;margin-bottom:0.6rem;display:block;}
-.wish-name{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--amber);margin-bottom:0.4rem;}
-.wish-message{font-size:1rem;line-height:1.7;color:var(--dusty-rose);white-space:pre-wrap;}
-.wish-date{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--mist);margin-top:0.8rem;opacity:0.7;}
-.wishes-empty{text-align:center;font-style:italic;color:var(--mist);font-size:1rem;padding:2rem;}
-.wishes-loading{text-align:center;color:var(--mist);font-style:italic;padding:1rem;}
-
-/* VIP / PRIORITY WISHES */
-.vip-section{max-width:560px;margin:2.5rem auto 0;padding:0 1.5rem;}
-.vip-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;color:var(--cream);margin-bottom:1.5rem;text-align:center;display:flex;align-items:center;justify-content:center;gap:.5rem;}
-.vip-title::before,.vip-title::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(212,149,106,.4),transparent);}
-.vip-title span{white-space:nowrap;padding:0 .6rem;}
-.wish-card.vip{
-  background:rgba(255,255,255,0.04);
-  border-color:rgba(212,149,106,0.0);
-  box-shadow:0 0 0 2px #d4956a, 0 0 18px 4px rgba(212,149,106,0.35), inset 0 0 18px rgba(212,149,106,0.06);
-  position:relative;overflow:visible;
+/* ══ WISHES ══ */
+.wishes-section{margin-top:3rem;}
+.wishes-title{
+  font-family:'Great Vibes',cursive;font-size:clamp(2rem,7vw,3rem);
+  color:var(--rose);margin-bottom:1.4rem;text-align:center;
 }
-.wish-card.vip::before{background:var(--amber);opacity:0.7;}
-.vip-crown{position:absolute;top:-12px;right:14px;font-size:1.1rem;line-height:1;filter:drop-shadow(0 0 6px rgba(212,149,106,0.8));animation:crownFloat 3s ease-in-out infinite;}
-@keyframes crownFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+.wishes-title span{font-size:.7em;}
+.wish-card{
+  background:rgba(255,255,255,.03);border:1px solid rgba(212,96,122,.15);
+  border-radius:5px;padding:1.5rem;margin-bottom:.9rem;
+  position:relative;overflow:hidden;
+  animation:cardIn .6s ease both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.wish-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 0%,rgba(212,96,122,.04),transparent 60%);
+  pointer-events:none;
+}
+.wish-card.vip{
+  border-color:rgba(212,149,106,.4);
+  box-shadow:0 0 0 1px rgba(212,149,106,.2),0 0 28px rgba(212,149,106,.1);
+}
+.vip-crown{position:absolute;top:10px;right:12px;font-size:1rem;opacity:.7;}
+.wish-emoji{font-size:1.8rem;display:block;margin-bottom:.5rem;}
+.wish-name{
+  font-family:'Playfair Display',serif;font-size:1rem;
+  color:var(--amber);margin-bottom:.4rem;
+}
+.wish-message{font-size:1rem;line-height:1.8;color:var(--dusty);opacity:.88;}
+.wish-date{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,191,204,.3);margin-top:.7rem;}
+.wishes-loading,.wishes-empty{
+  text-align:center;font-style:italic;color:rgba(240,191,204,.4);
+  padding:2rem;font-size:.95rem;
+}
 
-/* FOOTER */
-footer{text-align:center;padding:3rem 2rem;font-family:'Great Vibes',cursive;font-size:2rem;color:var(--rose);opacity:0.6;}
+/* VIP */
+.vip-title{
+  display:flex;align-items:center;gap:.6rem;
+  font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:.9rem;
+}
+.vip-title::before,.vip-title::after{content:'';flex:1;height:1px;background:rgba(212,149,106,.2);}
+
+/* ══ FOOTER ══ */
+footer{
+  text-align:center;padding:2rem 1rem;
+  font-style:italic;font-size:.82rem;color:rgba(240,191,204,.28);
+  letter-spacing:.08em;
+}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:480px){
+  .hero{padding-top:3.5rem;}
+  .form-card{padding:1.6rem 1.2rem;}
+  .emoji-opt{width:38px;height:38px;font-size:1.1rem;}
+  .cd-unit{min-width:58px;}
+  .cd-num{font-size:1.6rem;}
+}
 </style>
 </head>
 <body>
 
 <!-- LOADER -->
 <div id="pageLoader">
-  <p class="pl-name">Yash &amp; Tory ❤️🌸</p>
+  <div class="pl-name">Tory</div>
   <div class="pl-bar"><div class="pl-fill"></div></div>
-  <p class="pl-sub">Send Your Wishes ❤️</p>
+  <div class="pl-sub">loading something magical…</div>
 </div>
 
-<!-- Petals -->
-<script>
-for(let i=0;i<12;i++){const p=document.createElement('div');p.className='petal';p.style.left=Math.random()*100+'vw';p.style.animationDuration=(10+Math.random()*12)+'s';p.style.animationDelay=(Math.random()*10)+'s';document.body.appendChild(p);}
-</script>
-
+<!-- HERO -->
 <div class="hero">
-  <p class="hero-sub">You're Among The Trusted Few</p>
-  <h1 class="hero-title">Send Your Wish For<br>Me & Tory ❤️🌸</h1>
-  <p class="hero-desc">we've made it one whole beautiful year together alhamdulillah. Eikhane You Can Send A Message, A Memory, Or Just Some Love For Ussss!! — Your Wish(es) Will Be Displayed On Our Anniversary Website. 🌚💕(Oitar Link tmra paba nah guys dukkhito.)</p>
+  <div class="hero-eyebrow">🎀 may 4th, 2026 · her 19th birthday 🎀</div>
+  <div class="hero-title">
+    Happy Birthday<br>
+    <span class="hero-name">Tory</span>
+  </div>
+  <p class="hero-desc">
+    She turns nineteen this May — and I want her overflowing with love.<br>
+    Leave a wish, a memory, a joke, or just something from the heart.
+  </p>
   <div class="hero-divider"></div>
 </div>
 
-<!-- ── COUNTDOWN / THANK YOU ── -->
+<!-- COUNTDOWN -->
 <div id="countdownWrap">
-  <p class="cd-label">Our Anniversary Arrives In</p>
+  <p class="cd-label">✨ counting down to her birthday ✨</p>
   <div class="cd-grid">
-    <div class="cd-unit"><span class="cd-num" id="cd-d">00</span><span class="cd-word">Days</span></div>
-    <div class="cd-sep">·</div>
-    <div class="cd-unit"><span class="cd-num" id="cd-h">00</span><span class="cd-word">Hours</span></div>
-    <div class="cd-sep">·</div>
-    <div class="cd-unit"><span class="cd-num" id="cd-m">00</span><span class="cd-word">Minutes</span></div>
-    <div class="cd-sep">·</div>
-    <div class="cd-unit"><span class="cd-num" id="cd-s">00</span><span class="cd-word">Seconds</span></div>
+    <div class="cd-unit"><div class="cd-num" id="cd-d">00</div><div class="cd-word">days</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-num" id="cd-h">00</div><div class="cd-word">hours</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-num" id="cd-m">00</div><div class="cd-word">mins</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><div class="cd-num" id="cd-s">00</div><div class="cd-word">secs</div></div>
   </div>
 </div>
 
-<div id="thankYouWrap">
-  <div class="ty-card">
-    <span class="ty-ornament">~ with all our love ~</span>
-    <h2 class="ty-headline">Thank You,<br>From The Bottom<br>Of Our Hearts</h2>
-    <div class="ty-divider"></div>
-    <p class="ty-body">
-      One year. Three hundred and sixty five days of choosing each other. ❤️ <br><br>
-      Every single wish you left here means more than words can hold. You took a moment out of your day to pour love into ours, and we will carry this love with us, <strong>always.</strong><br><br>
-      To everyone who wrote something, funny, heartfelt, chaotic, or just anything at all. thank you for being part of our story. This anniversary isn't just ours to celebrate you guys are a part of it aswell ❤️
-    </p>
-    <p class="ty-footer">— Yash &amp; Tory, March 30 ❤️</p>
-    <span class="ty-petals">🌸 ✨ 🌸 ✨ 🌸</span>
-  </div>
-</div>
-
+<!-- FORM -->
 <div class="form-wrap">
   <div class="form-card">
+    <div class="fc-title">Leave your wish 💕</div>
+
     <div class="field">
       <label>Your name</label>
-      <input type="text" id="guestName" placeholder="What do they call you?" maxlength="60">
+      <input type="text" id="guestName" placeholder="What do they call you?" maxlength="60" autocomplete="off">
     </div>
+
     <div class="field">
-      <label>Your Wish For Ussss ❤️</label>
-      <textarea id="guestMessage" placeholder="Write something from the heart — a wish, a memory, a joke, or just anything you wish&#10;       messages cannot be deleted once sent"></textarea>
+      <label>Your wish for Tory 🎁</label>
+      <textarea id="guestMessage" placeholder="Write something from the heart — a wish, a memory, a joke, or anything ✨&#10;(messages can't be deleted once sent)"></textarea>
     </div>
-    <span class="emoji-label">Pick A Vibe</span>
+
+    <span class="emoji-label">Pick a vibe</span>
     <div class="emoji-grid" id="emojiGrid">
       <div class="emoji-opt selected" data-emoji="🌸" onclick="selectEmoji(this)">🌸</div>
       <div class="emoji-opt" data-emoji="🎉" onclick="selectEmoji(this)">🎉</div>
       <div class="emoji-opt" data-emoji="✨" onclick="selectEmoji(this)">✨</div>
+      <div class="emoji-opt" data-emoji="🎂" onclick="selectEmoji(this)">🎂</div>
+      <div class="emoji-opt" data-emoji="💕" onclick="selectEmoji(this)">💕</div>
       <div class="emoji-opt" data-emoji="🥂" onclick="selectEmoji(this)">🥂</div>
       <div class="emoji-opt" data-emoji="🌹" onclick="selectEmoji(this)">🌹</div>
       <div class="emoji-opt" data-emoji="😂" onclick="selectEmoji(this)">😂</div>
       <div class="emoji-opt" data-emoji="🌙" onclick="selectEmoji(this)">🌙</div>
       <div class="emoji-opt" data-emoji="💌" onclick="selectEmoji(this)">💌</div>
+      <div class="emoji-opt" data-emoji="🎀" onclick="selectEmoji(this)">🎀</div>
+      <div class="emoji-opt" data-emoji="🔥" onclick="selectEmoji(this)">🔥</div>
     </div>
+
     <button class="submit-btn" id="submitBtn" onclick="submitWish()">Send my wish 🌸</button>
-    <p class="submit-msg" id="submitMsg">Your Wish Has Been Sent! We'll See It On Our Anniversary Website 💕</p>
+    <p class="submit-msg" id="submitMsg">Your wish has been sent! She'll see it on her birthday website 💕</p>
   </div>
 
+  <!-- WISHES FEED -->
   <div class="wishes-section" id="wishesSection">
-    <div class="vip-section" id="vipSection" style="display:none;padding:0;">
+    <div id="vipSection" style="display:none">
       <div class="vip-title"><span>✨ Special Wishes ✨</span></div>
       <div id="vipFeed"></div>
     </div>
-    <h3 class="wishes-title" style="margin-top:2rem;">Wishes so far <span>❤️</span></h3>
-    <div id="wishesFeed"><p class="wishes-loading">Loading wishes...</p></div>
+    <h3 class="wishes-title">Wishes so far <span>❤️</span></h3>
+    <div id="wishesFeed"><p class="wishes-loading">Loading wishes… 🌸</p></div>
   </div>
 </div>
 
-<footer>Yash & Tory — From March 30, 2025 to Forever ❤️🌸</footer>
+<footer>written with love for Tory — her 19th birthday, may 4th 2026 🎀</footer>
 
 <script>
-/* ── SUPABASE ── */
-const SUPABASE_URL = 'https://dnawslmeqkcqiyrqyafj.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRuYXdzbG1lcWtjcWl5cnF5YWZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2NjE3MDcsImV4cCI6MjA4NjIzNzcwN30.1DKTCy4OlS-gRAjGIWnwnOav3LIzTeUeLw-q3c33wKw';
+/* ══ SUPABASE ══ */
+const SB_URL = 'https://dnawslmeqkcqiyrqyafj.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRuYXdzbG1lcWtjcWl5cnF5YWZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2NjE3MDcsImV4cCI6MjA4NjIzNzcwN30.1DKTCy4OlS-gRAjGIWnwnOav3LIzTeUeLw-q3c33wKw';
+const TABLE = 'birthday_wishes'; // create this table in Supabase: id, name, message, emoji, priority (bool), created_at
 
+async function sbFetch(path, opts={}){
+  const res = await fetch(SB_URL+'/rest/v1/'+path, {
+    headers:{
+      'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,
+      'Content-Type':'application/json','Prefer':'return=representation',
+      ...(opts.headers||{})
+    }, ...opts
+  });
+  return res;
+}
+
+/* ══ EMOJI ══ */
 let selectedEmoji = '🌸';
-
 function selectEmoji(el){
   document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.remove('selected'));
   el.classList.add('selected');
   selectedEmoji = el.dataset.emoji;
 }
 
-async function sbFetch(path, opts={}){
-  const res = await fetch(SUPABASE_URL+'/rest/v1/'+path, {
-    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})},
-    ...opts
-  });
-  return res;
-}
-
+/* ══ SUBMIT ══ */
 async function submitWish(){
   const name = document.getElementById('guestName').value.trim();
   const message = document.getElementById('guestMessage').value.trim();
-  if(!name){document.getElementById('guestName').focus();return;}
-  if(!message){document.getElementById('guestMessage').focus();return;}
+  if(!name){ document.getElementById('guestName').focus(); return; }
+  if(!message){ document.getElementById('guestMessage').focus(); return; }
   const btn = document.getElementById('submitBtn');
-  btn.disabled=true; btn.textContent='Sending... 🌸';
+  btn.disabled = true; btn.textContent = 'Sending… 🌸';
   try{
-    const res = await sbFetch('guestbook',{method:'POST',body:JSON.stringify({name,message,emoji:selectedEmoji})});
+    const res = await sbFetch(TABLE, {
+      method:'POST',
+      body: JSON.stringify({ name, message, emoji: selectedEmoji })
+    });
     if(res.ok){
       document.getElementById('submitMsg').classList.add('show');
-      document.getElementById('guestName').value='';
-      document.getElementById('guestMessage').value='';
-      btn.textContent='Wish sent! 💕';
-      setTimeout(()=>{btn.disabled=false;btn.textContent='Send my wish 🌸';},3000);
+      document.getElementById('guestName').value = '';
+      document.getElementById('guestMessage').value = '';
+      btn.textContent = 'Wish sent! 💕';
+      setTimeout(()=>{ btn.disabled=false; btn.textContent='Send my wish 🌸'; },3200);
       loadWishes();
     } else {
-      btn.disabled=false;btn.textContent='Try again 🌸';
+      btn.disabled=false; btn.textContent='Try again 🌸';
     }
-  }catch(e){btn.disabled=false;btn.textContent='Try again 🌸';}
+  } catch(e){ btn.disabled=false; btn.textContent='Try again 🌸'; }
 }
 
-function renderWishCard(w, i, isVip=false){
-  return `<div class="wish-card${isVip?' vip':''}" style="animation-delay:${i*0.08}s">
-    ${isVip?'<span class="vip-crown">👑</span>':''}
+/* ══ RENDER ══ */
+function esc(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+}
+function wishCard(w, i, vip=false){
+  return `<div class="wish-card${vip?' vip':''}" style="animation-delay:${i*.07}s">
+    ${vip?'<span class="vip-crown">👑</span>':''}
     <span class="wish-emoji">${w.emoji||'🌸'}</span>
-    <div class="wish-name">${escHtml(w.name)}</div>
-    <div class="wish-message">${escHtml(w.message)}</div>
+    <div class="wish-name">${esc(w.name)}</div>
+    <div class="wish-message">${esc(w.message)}</div>
     <div class="wish-date">${new Date(w.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div>
   </div>`;
 }
@@ -356,80 +382,61 @@ function renderWishCard(w, i, isVip=false){
 async function loadWishes(){
   const feed = document.getElementById('wishesFeed');
   const vipFeed = document.getElementById('vipFeed');
-  const vipSection = document.getElementById('vipSection');
+  const vipSec = document.getElementById('vipSection');
   try{
-    const res = await sbFetch('guestbook?select=*&order=created_at.desc&limit=50');
+    const res = await sbFetch(TABLE+'?select=*&order=created_at.desc&limit=60');
     const data = await res.json();
-    if(!data.length){feed.innerHTML='<p class="wishes-empty">Be the first to leave a wish! 🌸</p>';return;}
+    if(!Array.isArray(data)||!data.length){
+      feed.innerHTML='<p class="wishes-empty">Be the first to leave a wish for Tory! 🌸</p>'; return;
+    }
     const vip = data.filter(w=>w.priority===true);
-    const normal = data.filter(w=>w.priority!==true);
-    if(vip.length){
-      vipSection.style.display='block';
-      vipFeed.innerHTML = vip.map((w,i)=>renderWishCard(w,i,true)).join('');
-    } else {
-      vipSection.style.display='none';
-    }
-    if(normal.length){
-      feed.innerHTML = normal.map((w,i)=>renderWishCard(w,i,false)).join('');
-    } else {
-      feed.innerHTML='<p class="wishes-empty">No other wishes yet 🌸</p>';
-    }
-  }catch(e){feed.innerHTML='<p class="wishes-empty">Couldn\'t load wishes right now 🌸</p>';}
+    const norm = data.filter(w=>w.priority!==true);
+    if(vip.length){ vipSec.style.display='block'; vipFeed.innerHTML=vip.map((w,i)=>wishCard(w,i,true)).join(''); }
+    else vipSec.style.display='none';
+    feed.innerHTML = norm.length ? norm.map((w,i)=>wishCard(w,i)).join('') : '<p class="wishes-empty">No other wishes yet 🌸</p>';
+  } catch(e){ feed.innerHTML='<p class="wishes-empty">Couldn\'t load wishes right now 🌸</p>'; }
 }
 
-function escHtml(s){
-  return s
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/\n/g,'<br>'); 
-}
-
-/* ── COUNTDOWN ── */
-const TARGET = new Date('2026-03-30T00:00:00');   // midnight, local time
-
+/* ══ COUNTDOWN ══ */
+const TARGET = new Date('2026-05-04T00:00:00');
 function pad(n){ return String(n).padStart(2,'0'); }
-
-function animFlip(el, newVal){
-  if(el.textContent === newVal) return;
+function animFlip(el,v){
+  if(el.textContent===v) return;
   el.classList.add('flip');
-  setTimeout(()=>{ el.textContent = newVal; el.classList.remove('flip'); }, 160);
+  setTimeout(()=>{ el.textContent=v; el.classList.remove('flip'); },155);
 }
-
 function tick(){
-  const now  = new Date();
-  const diff = TARGET - now;
-
-  if(diff <= 0){
-    // Time's up — show thank-you, hide countdown
-    document.getElementById('countdownWrap').style.display = 'none';
-    const ty = document.getElementById('thankYouWrap');
-    if(!ty.classList.contains('revealed')){
-      ty.style.display = 'block';
-      // small delay so display:block paints first
-      requestAnimationFrame(()=> requestAnimationFrame(()=> ty.classList.add('revealed')));
-    }
-    return; // stop ticking
+  const diff = TARGET - new Date();
+  if(diff<=0){
+    document.getElementById('countdownWrap').innerHTML=`<p class="cd-label" style="font-size:1rem;color:var(--rose)">🎉 It's Tory's Birthday! Happy Birthday!! 🎉</p>`;
+    return;
   }
-
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000)  / 60000);
-  const s = Math.floor((diff % 60000)    / 1000);
-
-  animFlip(document.getElementById('cd-d'), pad(d));
-  animFlip(document.getElementById('cd-h'), pad(h));
-  animFlip(document.getElementById('cd-m'), pad(m));
-  animFlip(document.getElementById('cd-s'), pad(s));
-
-  setTimeout(tick, 1000);
+  const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+  animFlip(document.getElementById('cd-d'),pad(d));
+  animFlip(document.getElementById('cd-h'),pad(h));
+  animFlip(document.getElementById('cd-m'),pad(m));
+  animFlip(document.getElementById('cd-s'),pad(s));
+  setTimeout(tick,1000);
 }
 
-/* ── INIT ── */
+/* ══ PETALS ══ */
+function spawnPetals(){
+  const em=['🌸','✨','💕','🌷'];
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div'); p.className='petal';
+    p.textContent=em[0|Math.random()*em.length];
+    const dur=10+Math.random()*12;
+    p.style.cssText=`left:${Math.random()*100}vw;animation-duration:${dur}s;animation-delay:${Math.random()*dur}s`;
+    document.body.appendChild(p);
+  }
+}
+
+/* ══ INIT ══ */
 loadWishes();
 tick();
-document.fonts.ready.then(() => setTimeout(() => document.getElementById("pageLoader").classList.add("hide"), 1800));
+spawnPetals();
+document.fonts.ready.then(()=>setTimeout(()=>document.getElementById('pageLoader').classList.add('hide'),1800));
 </script>
 </body>
 </html>
