@@ -542,8 +542,42 @@
   (function(){
     const field = document.getElementById('polaroid-field');
     if(!field) return;
-    const palette = ['#E093B0','#B291E0','#9CC488','#F3D2E1','#CBAA71','#F9F0F2'];
-    const STICKER_COUNT = 9;
+
+    // One entry per polaroid. Swap 'colors' for a real image url/src later —
+    // the array length IS the sticker count, and each polaroid gets a different,
+    // randomly-shuffled entry from this list (no repeats, since counts match).
+    const PHOTOS = [
+      { colors:['#E093B0','#B291E0'] },
+      { colors:['#9CC488','#F3D2E1'] },
+      { colors:['#CBAA71','#F9F0F2'] },
+      { colors:['#B291E0','#9CC488'] },
+      { colors:['#F3D2E1','#CBAA71'] },
+      { colors:['#E093B0','#9CC488'] },
+      { colors:['#CBAA71','#B291E0'] },
+      { colors:['#F9F0F2','#E093B0'] },
+      { colors:['#9CC488','#CBAA71'] }
+    ];
+    const STICKER_COUNT = PHOTOS.length;
+
+    // Fisher–Yates shuffle so each polaroid is randomly assigned one photo from the list.
+    const shuffled = PHOTOS.slice();
+    for(let i=shuffled.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    const isNarrow = window.innerWidth <= 480;
+    const stickerHeight = isNarrow ? 68 : 88; // approx rendered height incl. padding/tape
+
+    // Split left/right, then slice each side's height into non-overlapping vertical bands —
+    // one sticker per band — so no two polaroids can ever land on top of each other.
+    const leftCount = Math.ceil(STICKER_COUNT/2);
+    const rightCount = STICKER_COUNT - leftCount;
+    const fieldHeight = Math.max(field.clientHeight, 600);
+    const leftBand = fieldHeight / leftCount;
+    const rightBand = rightCount ? fieldHeight / rightCount : fieldHeight;
+
+    let leftSlot = 0, rightSlot = 0;
     for(let i=0;i<STICKER_COUNT;i++){
       const s = document.createElement('div');
       s.className = 'polaroid-sticker';
@@ -551,19 +585,21 @@
       // fixed-width card can never get pushed past the edge of the screen on narrow viewports.
       const onLeft = i % 2 === 0;
       const margin = 6 + Math.random()*20; // 6-26px in from the edge
-      const top = 4 + Math.random()*88; // % of the (tall) locked zone, kept off the very top/bottom
+      const band = onLeft ? leftBand : rightBand;
+      const slot = onLeft ? leftSlot++ : rightSlot++;
+      const slack = Math.max(band - stickerHeight - 10, 0);
+      const top = slot*band + 6 + Math.random()*slack;
       const rot = (Math.random()*26 - 13).toFixed(1);
       const dur = (4.5 + Math.random()*3).toFixed(2);
       const delay = (Math.random()*3).toFixed(2);
       if(onLeft){ s.style.left = margin + 'px'; } else { s.style.right = margin + 'px'; }
-      s.style.top = top + '%';
+      s.style.top = top + 'px';
       s.style.setProperty('--rot', rot + 'deg');
       s.style.setProperty('--dur', dur + 's');
       s.style.setProperty('--delay', delay + 's');
       const photo = document.createElement('div');
       photo.className = 'photo';
-      const c1 = palette[Math.floor(Math.random()*palette.length)];
-      const c2 = palette[Math.floor(Math.random()*palette.length)];
+      const [c1, c2] = shuffled[i].colors;
       photo.style.background = 'linear-gradient(135deg,' + c1 + ',' + c2 + ')';
       s.appendChild(photo);
       field.appendChild(s);
