@@ -1,685 +1,1178 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-locked">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>DRIFTBREAKER — 60s Space Run</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500&family=Meow+Script&display=swap" rel="stylesheet">
 <style>
   :root{
-    --void-0:#05060c;
-    --void-1:#0b0f1e;
-    --void-2:#141a30;
-    --nebula:#5b3fb8;
-    --cyan:#3ff0d0;
-    --magenta:#ff3f8f;
-    --amber:#ffcf4d;
-    --ink-0:#eef1ff;
-    --ink-1:#8b93b8;
-    --font-display: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
-    --font-mono: 'Space Mono', 'Courier New', monospace;
+    --cream:#F9F0F2; --rose:#E8A7C1; --rose-2:#F3D2E1; --gold:#CBAA71; --sage-fixed:#9CB78E;
+    --bg-a:#3A1E33; --bg-b:#22111F; --surface:#472A42;
+    --accent:#E093B0; --accent-soft:rgba(224,147,176,0.20);
+    --loader-a:#1B2143; --loader-b:#0D1024;
+    /* Chest design aliases imported from the chest reference. */
+    --void-0:#22111F; --void-1:#22111F; --void-2:#472A42; --nebula:#6B4A32;
+    --cyan:#9CB78E; --magenta:#E093B0; --amber:#CBAA71; --ink-0:#F9F0F2; --ink-1:#9CB78E;
+
+    /* ---- Custom cursor ----
+       Point this at an image file (png/svg/cur, ideally 32x32) to use a custom cursor
+       site-wide. Leave the url() empty/invalid and it silently falls back to "auto".
+       Example: --cursor-src: url('cursor.png') 16 16, auto;                         */
+    --cursor-src: auto;
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0;height:100%;background:var(--void-0);}
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  html.scroll-locked, body.scroll-locked{ overflow:hidden; height:100%; overscroll-behavior:none; }
+  /* Smooth, consistent easing as the default for anything that doesn't specify its own */
+  *{ transition-timing-function:cubic-bezier(.4,0,.2,1); }
   body{
-    font-family:var(--font-display);
-    display:flex;align-items:center;justify-content:center;
-    overflow:hidden;
-    color:var(--ink-0);
-    height:100dvh; 
+    /* PLACEHOLDER background for the main site — swap this out for real art/photos later */
+    background:radial-gradient(circle at 50% 15%, var(--bg-a), var(--bg-b) 80%);
+    color:var(--cream); font-family:'Jost', sans-serif; font-weight:300; overflow-x:hidden;
+    cursor:var(--cursor-src);
+  }
+  ::selection{ background:var(--rose); color:var(--bg-b); }
+  button{ font-family:inherit; cursor:pointer; }
+  button:focus-visible, a:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:2px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
   }
 
+  #decor{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .particle{ position:absolute; border-radius:50%; background:var(--rose-2); opacity:0.5; animation:twinkle 4s ease-in-out infinite; }
+  @keyframes twinkle{ 0%,100%{opacity:0.15; transform:scale(1);} 50%{opacity:0.8; transform:scale(1.4);} }
 
-  #driftbreaker-root{
-    position:relative;
+  /* ---------- Subtle floating motion, used throughout ---------- */
+  @keyframes gentle-float{
+    0%,100%{ transform:translateY(0) rotate(var(--rot,0deg)); }
+    50%{ transform:translateY(-10px) rotate(var(--rot,0deg)); }
+  }
+  .floaty{ animation:gentle-float 5s ease-in-out infinite; }
 
-    width:min(520px, 100vw, calc(100dvh * 9 / 16));
-    aspect-ratio:9/16;
-    background:
-      radial-gradient(ellipse at 30% 15%, rgba(91,63,184,0.35), transparent 55%),
-      radial-gradient(ellipse at 80% 80%, rgba(63,240,208,0.10), transparent 50%),
-      linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 100%);
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:0 0 0 1px rgba(255,255,255,0.06), 0 30px 80px -20px rgba(0,0,0,0.8);
-    user-select:none;
-    touch-action:none;
-    container-type:inline-size; 
-  }
+  section{ position:relative; z-index:1; padding:8vh 6vw; scroll-margin-top:24px; }
+  #home{ scroll-margin-top:0; }
 
-  canvas#gameCanvas{
-    position:absolute; inset:0;
-    width:100%; height:100%;
-    display:block;
+  /* ================= PRELOADER ================= */
+  #preloader{
+    position:fixed; inset:0; z-index:950;
+    background:radial-gradient(circle at 50% 30%, var(--loader-a) 0%, var(--loader-b) 75%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.4rem;
+    transition:opacity 0.9s cubic-bezier(.4,0,.2,1), visibility 0.9s cubic-bezier(.4,0,.2,1);
   }
+  #preloader.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
 
+  .bunny-wrap{ width:86px; height:86px; position:relative; }
+  .bunny{ width:100%; height:100%; animation:bunny-hop 0.9s cubic-bezier(.5,0,.5,1) infinite; transform-origin:50% 100%; }
+  .bunny .ear{ transform-box:fill-box; transform-origin:50% 96%; animation:ear-flop 0.9s ease-in-out infinite; }
+  .bunny .ear.right{ animation-delay:0.05s; }
+  @keyframes bunny-hop{
+    0%{ transform:translateY(0) scaleY(1) scaleX(1); }
+    28%{ transform:translateY(-26px) scaleY(1.08) scaleX(0.96); }
+    46%{ transform:translateY(-26px) scaleY(1.08) scaleX(0.96); }
+    62%{ transform:translateY(0) scaleY(0.85) scaleX(1.1); }
+    78%{ transform:translateY(0) scaleY(1.02) scaleX(0.98); }
+    100%{ transform:translateY(0) scaleY(1) scaleX(1); }
+  }
+  @keyframes ear-flop{
+    0%{ transform:rotate(0deg); }
+    28%{ transform:rotate(-14deg); }
+    46%{ transform:rotate(-14deg); }
+    62%{ transform:rotate(6deg); }
+    100%{ transform:rotate(0deg); }
+  }
+  .bunny-shadow{ width:44px; height:9px; border-radius:50%; background:rgba(0,0,0,0.35); margin:0.35rem auto 0; animation:shadow-pulse 0.9s cubic-bezier(.5,0,.5,1) infinite; filter:blur(1px); }
+  @keyframes shadow-pulse{
+    0%{ transform:scale(1); opacity:0.5; }
+    28%{ transform:scale(0.55); opacity:0.2; }
+    46%{ transform:scale(0.55); opacity:0.2; }
+    100%{ transform:scale(1); opacity:0.5; }
+  }
+  .pre-text{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1rem; letter-spacing:0.08em; color:var(--cream); opacity:0.7; }
 
-  #hud{
-    position:absolute; top:0; left:0; right:0;
-    display:flex; justify-content:space-between; align-items:flex-start;
-    padding:max(14px, env(safe-area-inset-top)) 16px 0;
-    pointer-events:none;
-    opacity:0; transition:opacity .3s ease;
-    z-index:5;
-  }
-  #hud.visible{opacity:1;}
-  .hud-block{
-    display:flex; flex-direction:column; gap:2px;
-  }
-  .hud-label{
-    font-family:var(--font-mono);
-    font-size:9px; letter-spacing:.18em; text-transform:uppercase;
-    color:var(--ink-1);
-  }
-  .hud-value{
-    font-size:20px; font-weight:700; letter-spacing:.02em;
-    color:var(--ink-0);
-    text-shadow:0 0 12px rgba(63,240,208,0.35);
-  }
-  #hud .score .hud-value{ color:var(--cyan); text-align:right;}
-  #hud .lives{ align-items:flex-end; }
-  .life-dot{
-    display:inline-block; width:9px; height:9px; margin-left:4px;
-    border-radius:50%; background:var(--magenta);
-    box-shadow:0 0 8px rgba(255,63,143,.7);
-  }
-  .life-dot.spent{ background:transparent; box-shadow:none; border:1px solid rgba(255,255,255,.15); }
-
-  .overlay{
-    position:absolute; inset:0;
+  /* ================= LOCK SCREEN ================= */
+  #lock-screen{
+    position:fixed; inset:0; z-index:300;
+    background:radial-gradient(circle at 50% 30%, var(--loader-a) 0%, var(--loader-b) 75%);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    text-align:center; padding:32px;
-    background:
-      radial-gradient(ellipse at 50% 30%, rgba(91,63,184,0.4), transparent 60%),
-      rgba(5,6,12,0.72);
-    backdrop-filter:blur(3px);
-    z-index:10;
-    transition:opacity .35s ease, visibility .35s ease;
+    text-align:center; gap:1.8rem; padding:6vh 6vw;
+    transition:opacity 1.1s cubic-bezier(.4,0,.2,1), visibility 1.1s cubic-bezier(.4,0,.2,1);
   }
-  .overlay.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  #lock-screen.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  .lock-icon{ font-size:1.8rem; opacity:0.85; }
+  .lock-eyebrow{ letter-spacing:0.4em; text-transform:uppercase; font-size:0.65rem; color:var(--accent); }
+  #lock-screen h1{ font-family:'Meow Script', cursive; font-weight:400; font-size:clamp(3.6rem,12vw,7rem); color:var(--rose-2); text-shadow:0 0 40px rgba(234,199,209,0.25); line-height:0.95; }
+  .lock-msg{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:clamp(1rem,2.2vw,1.3rem); opacity:0.8; max-width:36ch; }
 
-  .eyebrow{
-    font-family:var(--font-mono); font-size:clamp(10px,3.2cqw,12px); letter-spacing:.35em;
-    text-transform:uppercase; color:var(--cyan); margin-bottom:10px;
-    text-shadow:0 0 10px rgba(63,240,208,.5);
-  }
-  .title{
-    font-size:clamp(26px,10cqw,44px); font-weight:800; letter-spacing:.02em;
-    margin:0 0 8px; line-height:1.05;
-    background:linear-gradient(180deg,#ffffff, #b9c2ff 70%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .sub{
-    font-family:var(--font-mono); font-size:clamp(11px,3.4cqw,13px); color:var(--ink-1);
-    max-width:85%; line-height:1.6; margin-bottom:28px;
-  }
+  .flip-wrap{ perspective:1200px; width:100%; max-width:420px; }
+  .flip-inner{ position:relative; min-height:clamp(130px,20vw,165px); transition:transform 1.1s cubic-bezier(.4,.1,.2,1); transform-style:preserve-3d; }
+  .flip-inner.flipped{ transform:rotateX(180deg); }
+  .flip-face{ position:absolute; inset:0; backface-visibility:hidden; display:flex; align-items:center; justify-content:center; }
+  .flip-face.back{ transform:rotateX(180deg); }
+  .countdown{ display:flex; gap:clamp(1rem,4vw,2.4rem); flex-wrap:wrap; justify-content:center; }
+  .cd-unit{ display:flex; flex-direction:column; align-items:center; min-width:62px; }
+  .cd-num{ font-family:'Cormorant Garamond', serif; font-size:clamp(2.1rem,6vw,3rem); color:var(--accent); font-variant-numeric:tabular-nums; }
+  .cd-label{ font-size:0.6rem; letter-spacing:0.24em; text-transform:uppercase; color:var(--sage-fixed); margin-top:0.3rem; }
+  .lock-birthday-msg{ font-family:'Meow Script', cursive; font-size:clamp(2.4rem,8vw,3.6rem); color:var(--gold); text-align:center; line-height:1.2; }
+  .lock-birthday-msg .lb-name{ color:var(--rose-2); }
+  .lock-note{ font-size:0.68rem; opacity:0.45; margin-top:0.4rem; }
 
-  .tap-pulse{
-    display:inline-flex; align-items:center; gap:10px;
-    padding:14px 30px;
-    border-radius:100px;
-    border:1px solid rgba(63,240,208,.5);
-    background:rgba(63,240,208,0.08);
-    color:var(--cyan);
-    font-family:var(--font-mono);
-    font-size:13px; letter-spacing:.2em; text-transform:uppercase;
-    animation:pulse 1.8s ease-in-out infinite;
-    cursor:pointer;
-  }
-  @keyframes pulse{
-    0%,100%{ box-shadow:0 0 0 0 rgba(63,240,208,.35); transform:scale(1); }
-    50%{ box-shadow:0 0 0 10px rgba(63,240,208,0); transform:scale(1.03); }
-  }
+  /* ================= CELEBRATION ================= */
+  #celebration{ position:fixed; inset:0; z-index:400; pointer-events:none; opacity:0; transition:opacity 0.4s ease; }
+  #celebration.on{ opacity:1; }
+  #confetti-canvas, #fireworks-canvas{ position:absolute; inset:0; width:100%; height:100%; }
+  .balloon{ position:absolute; bottom:-140px; width:52px; height:66px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; animation:rise linear forwards; }
+  .balloon::after{ content:''; position:absolute; left:50%; top:100%; width:1px; height:70px; background:rgba(248,244,238,0.4); transform:translateX(-50%); }
+  @keyframes rise{ 0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:1;} 100%{ transform:translateY(-115vh) translateX(var(--drift,20px)) rotate(var(--wob,6deg)); opacity:0.9;} }
 
-  .stat-row{
-    display:flex; gap:28px; margin:6px 0 26px;
-  }
-  .stat{ display:flex; flex-direction:column; align-items:center; }
-  .stat .n{ font-size:28px; font-weight:800; color:var(--ink-0); }
-  .stat .n.best{ color:var(--amber); }
-  .stat .l{ font-family:var(--font-mono); font-size:9px; letter-spacing:.18em; color:var(--ink-1); text-transform:uppercase; margin-top:4px; }
+  /* ================= MAIN SITE ================= */
+  #site{ opacity:0; transition:opacity 1.2s cubic-bezier(.4,0,.2,1) 0.1s; }
+  #site.revealed{ opacity:1; }
 
-  .retry-btn{
-    padding:13px 34px;
-    border-radius:100px;
-    border:none;
-    background:linear-gradient(135deg,var(--cyan),#2bb8ff);
-    color:#04141a;
-    font-family:var(--font-display); font-weight:700; font-size:14px; letter-spacing:.04em;
-    cursor:pointer;
-    box-shadow:0 8px 24px -6px rgba(63,240,208,.5);
-    transition:transform .15s ease;
-  }
-  .retry-btn:active{ transform:scale(.96); }
+  .hero{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1.6rem; }
+  .eyebrow{ letter-spacing:0.42em; text-transform:uppercase; font-size:0.68rem; color:var(--sage-fixed); }
+  .hero h1{ font-family:'Meow Script', cursive; font-weight:400; font-size:clamp(4.5rem,14vw,9rem); color:var(--rose-2); line-height:0.9; text-shadow:0 0 40px rgba(234,199,209,0.25); animation:hero-float 7s ease-in-out infinite; }
+  @keyframes hero-float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  .hero .sub{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:clamp(1.1rem,2.4vw,1.5rem); color:var(--cream); opacity:0.85; max-width:34ch; }
+  .date-line{ margin-top:0.8rem; font-size:0.85rem; letter-spacing:0.08em; color:var(--gold); }
+  .scroll-cue{ position:absolute; bottom:5vh; left:50%; transform:translateX(-50%); font-size:0.65rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--sage-fixed); opacity:0.7; }
+  .scroll-cue::after{ content:'↓'; display:block; font-size:1.1rem; color:var(--sage-fixed); margin:0.5rem auto 0; opacity:0.7; animation:pulldown 2.2s ease-in-out infinite; }
+  @keyframes pulldown{ 0%,100%{transform:translateY(0); opacity:0.4;} 50%{transform:translateY(8px); opacity:1;} }
 
-  .hint{
-    position:absolute; bottom:14px; left:0; right:0;
-    text-align:center; font-family:var(--font-mono); font-size:10px;
-    letter-spacing:.12em; color:var(--ink-1); opacity:.7;
-  }
+  .section-head{ text-align:center; margin-bottom:4.5vh; }
+  .section-head .eyebrow{ margin-bottom:0.6rem; }
+  .section-head h2{ font-family:'Cormorant Garamond', serif; font-weight:500; font-size:clamp(2rem,5vw,3rem); color:var(--cream); }
+  .section-head p.hint{ font-family:'Cormorant Garamond', serif; font-style:italic; opacity:0.75; margin-top:0.6rem; font-size:1.05rem; min-height:1.5em; transition:opacity 0.3s ease; }
 
-  #flash{
-    position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:8;
+  /* ---------- Catch the Key game ---------- */
+  .key-arena-wrap{ max-width:560px; margin:0 auto; }
+  .key-arena{
+    position:relative; height:min(46vh,340px); border-radius:16px; overflow:hidden;
+    background:linear-gradient(160deg, var(--surface), rgba(255,255,255,0.02));
+    border:1px dashed var(--accent-soft);
   }
+  .key-sprite{
+    position:absolute; left:calc(50% - 26px); top:calc(50% - 26px);
+    width:52px; height:52px; display:flex; align-items:center; justify-content:center;
+    font-size:2rem; border:none; background:none; color:var(--gold);
+    transition:left 0.4s cubic-bezier(.3,.9,.4,1.2), top 0.4s cubic-bezier(.3,.9,.4,1.2);
+    filter:drop-shadow(0 0 14px rgba(203,170,113,0.5));
+    user-select:none; -webkit-tap-highlight-color:transparent;
+  }
+  .key-sprite.running{ transition:left 0.55s ease, top 0.55s ease; animation:key-jitter 0.4s ease-in-out infinite; }
+  @keyframes key-jitter{ 0%,100%{ transform:rotate(-8deg);} 50%{ transform:rotate(8deg);} }
+  .key-sprite.caught{ opacity:0; transform:scale(0.3); transition:opacity 0.5s ease, transform 0.5s ease; }
+  .key-counter{ position:absolute; top:0.7rem; right:0.9rem; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--sage-fixed); opacity:0.7; }
+  .key-caught-badge{ display:flex; align-items:center; justify-content:center; gap:0.5rem; margin-top:1.2rem; font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1.1rem; color:var(--gold); opacity:0; transition:opacity 0.6s ease; }
+  .key-caught-badge.show{ opacity:1; }
+
+  /* ---------- Chest ---------- */
+  .chest-wrap{ position:relative; width:220px; height:170px; margin:0 auto; }
+  @media (max-width:360px){ .chest-wrap{ transform:scale(0.85); } }
+  .chest-lid{
+    position:absolute; top:14px; left:20px; right:20px; height:46px;
+    background:linear-gradient(160deg,#5a3f18,#2c1c08); border:2px solid var(--amber);
+    border-radius:14px 14px 4px 4px; box-shadow:0 4px 14px rgba(0,0,0,.5);
+    transform-origin:8% 100%; transition:transform .9s cubic-bezier(.34,1.56,.4,1);
+    z-index:2;
+  }
+  .chest-lid.open{ transform:rotate(-108deg) translate(-4px,-2px); }
+  .chest-body{
+    position:absolute; left:14px; right:14px; top:52px; bottom:6px;
+    background:linear-gradient(160deg,#6b4a1e,#33220c); border:2px solid var(--amber);
+    border-radius:6px 6px 12px 12px; box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 14px 30px rgba(0,0,0,.5);
+    z-index:1;
+  }
+  .chest-glow{ position:absolute; inset:52px 14px 6px; border-radius:6px 6px 12px 12px; background:radial-gradient(ellipse at 50% 0%, rgba(255,207,77,.55), transparent 70%); opacity:0; transition:opacity .6s ease .3s; z-index:1; pointer-events:none; }
+  .chest-glow.show{ opacity:1; }
+  .chest-lock{
+    position:absolute; left:50%; top:36px; transform:translateX(-50%); width:32px; height:36px;
+    background:radial-gradient(circle at 38% 30%, var(--amber), #8a6a1e 75%); border-radius:7px;
+    display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--void-0);
+    box-shadow:0 2px 10px rgba(0,0,0,.55); z-index:3; transition:opacity .4s ease, transform .4s ease;
+  }
+  .chest-lock.gone{ opacity:0; transform:translateX(-50%) scale(.3) rotate(35deg); }
+  .chains{
+    position:absolute; inset:-4px -20px 6px; z-index:4; pointer-events:none;
+    display:flex; flex-direction:column; justify-content:space-evenly;
+    font-size:1.3rem; letter-spacing:1px; color:#cfd3da; text-shadow:0 2px 5px rgba(0,0,0,.6);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .chains span{ display:block; text-align:center; }
+  .chains.broken{ opacity:0; transform:translateY(40px) rotate(14deg); }
+
+  .chest-lock-overlay{
+    position:absolute; inset:-14px; z-index:6; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.4rem;
+    background:rgba(5,6,12,.55); backdrop-filter:blur(2px); border-radius:20px;
+    font-family:var(--font-mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-1); text-align:center; padding:1rem;
+    transition:opacity .5s ease; opacity:1;
+  }
+  .chest-lock-overlay span{ font-size:1.6rem; }
+  .chest-lock-overlay.hidden{ opacity:0; pointer-events:none; }
+
+  .held-key{
+    position:absolute; top:-46px; left:50%; transform:translate(-50%,0); font-size:2rem; cursor:grab;
+    filter:drop-shadow(0 0 10px rgba(255,207,77,.6)); touch-action:none; z-index:8;
+    animation:heldFloat 2s ease-in-out infinite;
+  }
+  .held-key.dragging{ cursor:grabbing; animation:none; transition:none; }
+  @keyframes heldFloat{ 0%,100%{ transform:translate(-50%,0); } 50%{ transform:translate(-50%,-8px); } }
+
+  .chest-hint{ text-align:center; font-family:var(--font-mono); font-size:.68rem; letter-spacing:.08em; color:var(--ink-1); margin-top:2.4rem; opacity:.8; }
+
+  /* ---------- Final section (gated) ---------- */
+  #final-section{ position:relative; }
+  .below-chest-wrap{ position:relative; overflow-x:hidden; }
+  .final-inner{ transition:filter 0.9s cubic-bezier(.4,0,.2,1), opacity 0.9s cubic-bezier(.4,0,.2,1); }
+  .final-inner.locked{ filter:blur(9px); opacity:0.35; pointer-events:none; user-select:none; }
+  .final-lock-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.6rem;
+    text-align:center; z-index:2; transition:opacity 0.6s ease, visibility 0.6s ease;
+  }
+  .final-lock-overlay.hidden{ opacity:0; visibility:hidden; }
+  .final-lock-overlay .icon{ font-size:1.8rem; opacity:0.8; }
+  .final-lock-overlay p{ font-family:'Cormorant Garamond', serif; font-style:italic; opacity:0.7; max-width:28ch; }
+
+  /* ---------- Floating polaroid stickers (below the chest) ---------- */
+  .polaroid-field{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .polaroid-sticker{
+    position:absolute; width:70px; padding:6px 6px 15px; background:#fdf9f4; border-radius:2px;
+    box-shadow:0 10px 26px rgba(0,0,0,0.4); opacity:0.82;
+    animation:gentle-float var(--dur,5s) ease-in-out infinite; animation-delay:var(--delay,0s);
+  }
+  .polaroid-sticker::before{
+    content:''; position:absolute; top:-7px; left:50%; transform:translateX(-50%) rotate(-4deg);
+    width:32px; height:13px; background:rgba(243,210,225,0.55);
+  }
+  .polaroid-sticker .photo{ width:100%; aspect-ratio:1/1; border-radius:1px; }
+  @media (max-width:480px){ .polaroid-sticker{ width:52px; padding:4px 4px 11px; } }
+
+  .wish{ text-align:center; max-width:640px; margin:0 auto; padding-top:2vh; padding-bottom:6vh; }
+  .wish h2{ font-family:'Meow Script', cursive; font-size:clamp(2.6rem,7vw,3.6rem); color:var(--gold); margin-bottom:1.4rem; }
+  .wish p{ font-family:'Cormorant Garamond', serif; font-size:clamp(1.2rem,2.8vw,1.6rem); line-height:1.7; color:var(--cream); opacity:0.9; }
+  .wish .signoff{ margin-top:1.6rem; font-family:'Meow Script', cursive; font-size:2.2rem; color:var(--rose-2); }
+
+  .photo-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1.2rem; max-width:820px; margin:3rem auto 0; }
+  .photo-card{ aspect-ratio:1/1; border-radius:6px; border:1px dashed var(--accent-soft); display:flex; align-items:center; justify-content:center; font-size:0.65rem; letter-spacing:0.08em; text-transform:uppercase; opacity:0.4; text-align:center; padding:0.6rem; }
+
+  /* ---------- Candle cake (ported from ref.html) ---------- */
+  .cake-wrap{ max-width:520px; margin:0 auto; text-align:center; }
+  .cake{ position:relative; width:180px; margin:2rem auto 1.4rem; }
+  .flame{ width:10px; height:16px; margin:0 auto; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:radial-gradient(circle at 50% 30%, #FFE9A8, var(--gold) 70%); transition:opacity 0.5s ease, transform 0.5s ease; }
+  .flame.out{ opacity:0; transform:scale(0.2) translateY(6px); }
+  .candle{ width:6px; height:34px; background:var(--rose-2); margin:0 auto; border-radius:2px; }
+  .tier{ background:linear-gradient(160deg, var(--surface), rgba(255,255,255,0.03)); border:1px solid var(--accent-soft); transition:background 0.8s ease; }
+  .tier.top{ width:120px; height:44px; margin:0 auto; border-radius:6px 6px 0 0; }
+  .tier.bottom{ width:180px; height:54px; margin:0 auto; border-radius:4px; }
+  .blow-btn{ background:transparent; border:1px solid var(--accent); color:var(--cream); padding:0.7rem 1.6rem; border-radius:30px; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; transition:background 0.3s ease; }
+  .blow-btn:hover{ background:var(--accent-soft); }
+  .cake-msg{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1.15rem; opacity:0; height:1.6rem; transition:opacity 0.6s ease; color:var(--accent); margin-top:0.8rem; }
+  .cake-msg.show{ opacity:0.95; }
+
+  footer{ text-align:center; padding:3rem 0 4rem; font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(147,169,133,0.6); }
+
+  /* ================= HAMBURGER NAV ================= */
+  #nav-toggle{
+    position:fixed; top:18px; right:18px; z-index:500; width:46px; height:46px; border-radius:50%;
+    background:rgba(20,14,20,0.75); border:1px solid var(--accent-soft);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+    backdrop-filter:blur(6px); transition:background 0.3s ease;
+  }
+  #nav-toggle:hover{ background:rgba(20,14,20,0.92); }
+  #nav-toggle span{ display:block; width:20px; height:2px; background:var(--cream); border-radius:2px; transition:transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.25s ease; }
+  #nav-toggle.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  #nav-toggle.open span:nth-child(2){ opacity:0; }
+  #nav-toggle.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  #nav-scrim{
+    position:fixed; inset:0; z-index:470; background:rgba(10,6,12,0.55); backdrop-filter:blur(2px);
+    opacity:0; visibility:hidden; transition:opacity 0.4s ease, visibility 0.4s ease;
+  }
+  #nav-scrim.open{ opacity:1; visibility:visible; }
+
+  #nav-panel{
+    position:fixed; top:0; right:0; height:100vh; width:min(78vw,300px); z-index:480;
+    background:linear-gradient(165deg, var(--surface), var(--bg-b) 85%);
+    border-left:1px solid var(--accent-soft); box-shadow:-14px 0 40px rgba(0,0,0,0.4);
+    transform:translateX(100%); transition:transform 0.5s cubic-bezier(.4,0,.2,1);
+    display:flex; flex-direction:column; justify-content:center; gap:0.2rem; padding:3rem 2.2rem;
+  }
+  #nav-panel.open{ transform:translateX(0); }
+  #nav-panel a{
+    color:var(--cream); text-decoration:none; font-family:'Cormorant Garamond', serif; font-style:italic;
+    font-size:clamp(1.1rem,4vw,1.35rem); padding:0.75rem 0; opacity:0.6;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    transition:opacity 0.3s ease, color 0.3s ease, padding-left 0.3s ease;
+  }
+  #nav-panel a:hover, #nav-panel a:focus-visible, #nav-panel a.active{ opacity:1; color:var(--rose-2); padding-left:0.5rem; }
+  #nav-panel a:last-child{ border-bottom:none; }
+  @media (min-width:820px){ #nav-panel{ width:250px; } }
+
+  /* ================= DEBUG MENU ================= */
+  #debug-toggle{
+    position:fixed; bottom:18px; right:18px; z-index:9999; width:42px; height:42px; border-radius:50%;
+    background:rgba(20,14,20,0.75); border:1px solid var(--accent-soft); color:var(--cream); font-size:1.1rem;
+    display:flex; align-items:center; justify-content:center; backdrop-filter:blur(6px);
+  }
+  #debug-panel{
+    position:fixed; bottom:70px; right:18px; z-index:9999; width:260px; max-height:70vh; overflow-y:auto;
+    background:rgba(20,14,20,0.92); border:1px solid var(--accent-soft); border-radius:10px; padding:1rem;
+    display:flex; flex-direction:column; gap:0.5rem; backdrop-filter:blur(8px);
+    transform:translateY(10px); opacity:0; visibility:hidden; transition:opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  }
+  #debug-panel.show{ transform:translateY(0); opacity:1; visibility:visible; }
+  #debug-panel h4{ font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--sage-fixed); margin:0.4rem 0 0.1rem; }
+  #debug-panel h4:first-child{ margin-top:0; }
+  #debug-panel button{
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--cream);
+    padding:0.5rem 0.6rem; border-radius:6px; font-size:0.72rem; text-align:left;
+  }
+  #debug-panel button:hover{ background:var(--accent-soft); }
+  #debug-status{ font-size:0.62rem; opacity:0.5; line-height:1.5; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.5rem; margin-top:0.2rem; }
 </style>
 </head>
-<body>
+<body class="scroll-locked">
 
-<div id="driftbreaker-root">
-  <canvas id="gameCanvas"></canvas>
+<div id="decor"></div>
 
-  <div id="hud">
-    <div class="hud-block lives">
-      <span class="hud-label">Hull</span>
-      <span class="hud-value" id="hudLives"></span>
+<!-- ============ PRELOADER ============ -->
+<div id="preloader">
+  <div class="bunny-wrap">
+    <svg class="bunny" viewBox="0 0 100 100" fill="none">
+      <!-- crouched body drawn in side profile (torso + back haunch + front paws) -->
+      <ellipse cx="53" cy="68" rx="29" ry="22" fill="#F9F0F2"/>
+      <ellipse cx="74" cy="76" rx="13" ry="10" fill="#F9F0F2"/>
+      <ellipse cx="36" cy="87" rx="7" ry="5" fill="#F9F0F2"/>
+      <ellipse cx="60" cy="89" rx="7" ry="5" fill="#F9F0F2"/>
+      <!-- ears painted before the head so the head circle overlaps and fuses their base -->
+      <ellipse class="ear left" cx="33" cy="21" rx="6.5" ry="18" fill="#F3D2E1"/>
+      <ellipse class="ear left" cx="33" cy="21" rx="3" ry="12" fill="#B8657E"/>
+      <ellipse class="ear right" cx="52" cy="21" rx="6.5" ry="18" fill="#F3D2E1"/>
+      <ellipse class="ear right" cx="52" cy="21" rx="3" ry="12" fill="#B8657E"/>
+      <!-- head turned to face the camera, sitting atop the sideways body -->
+      <ellipse cx="42" cy="36" rx="19" ry="17" fill="#F9F0F2"/>
+      <circle cx="35" cy="34" r="2.6" fill="#22111F"/>
+      <circle cx="50" cy="34" r="2.6" fill="#22111F"/>
+      <ellipse cx="42" cy="41" rx="3" ry="2.2" fill="#E093B0"/>
+    </svg>
+  </div>
+  <div class="bunny-shadow"></div>
+  <div class="pre-text">loading...</div>
+</div>
+
+<!-- ============ LOCK SCREEN ============ -->
+<div id="lock-screen">
+  <div class="lock-icon floaty">✦</div>
+  <div class="lock-eyebrow">this little corner is sealed until</div>
+  <h1 id="lock-title">Her Day</h1>
+  <p class="lock-msg">Everything here is waiting for one particular moment. Come back on the 27th.</p>
+
+  <div class="flip-wrap">
+    <div class="flip-inner" id="flip-inner">
+      <div class="flip-face front">
+        <div class="countdown">
+          <div class="cd-unit"><div class="cd-num" id="lk-days">--</div><div class="cd-label">Days</div></div>
+          <div class="cd-unit"><div class="cd-num" id="lk-hours">--</div><div class="cd-label">Hours</div></div>
+          <div class="cd-unit"><div class="cd-num" id="lk-mins">--</div><div class="cd-label">Mins</div></div>
+          <div class="cd-unit"><div class="cd-num" id="lk-secs">--</div><div class="cd-label">Secs</div></div>
+        </div>
+      </div>
+      <div class="flip-face back">
+        <div class="lock-birthday-msg">Happy Birthday,<br><span class="lb-name" id="lock-name">Her Name</span></div>
+      </div>
     </div>
-    <div class="hud-block score">
-      <span class="hud-label">Score</span>
-      <span class="hud-value" id="hudScore">0</span>
+  </div>
+  <div class="lock-note">psst — placeholder name/date, swap these before sending</div>
+</div>
+
+<!-- ============ CELEBRATION LAYER ============ -->
+<div id="celebration">
+  <canvas id="confetti-canvas"></canvas>
+  <canvas id="fireworks-canvas"></canvas>
+  <div id="balloon-layer" style="position:absolute; inset:0;"></div>
+</div>
+
+<!-- ============ DEBUG MENU ============ -->
+<button id="debug-toggle" aria-label="Debug menu">🛠</button>
+<div id="debug-panel">
+  <h4>Preloader / Lock</h4>
+  <button data-action="skip-preloader">Skip preloader</button>
+  <button data-action="force-unlock">Force birthday unlock now</button>
+  <button data-action="soon-countdown">Set countdown to 10s (test flip)</button>
+  <button data-action="relock">Re-lock site (reload)</button>
+
+  <h4>Key game</h4>
+  <button data-action="auto-catch-key">Auto-catch the key</button>
+  <button data-action="reset-key">Reset key game</button>
+
+  <h4>Chest</h4>
+  <button data-action="unlock-chest">Force-open chest</button>
+  <button data-action="reset-chest">Reset chest + final section</button>
+
+  <h4>Effects</h4>
+  <button data-action="fire-confetti">Confetti burst</button>
+  <button data-action="fire-balloons">Balloon release</button>
+  <button data-action="fire-fireworks">Fireworks</button>
+
+  <h4>Reset</h4>
+  <button data-action="clear-all">Clear saved data + reload</button>
+  <div id="debug-status">status: —</div>
+</div>
+
+<!-- ============ MAIN SITE ============ -->
+<div id="site">
+
+  <button id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-panel">
+    <span></span><span></span><span></span>
+  </button>
+  <div id="nav-scrim"></div>
+  <nav id="nav-panel">
+    <a href="#home" data-target="home">Home</a>
+    <a href="#key-game-section" data-target="key-game-section">Catch the Key</a>
+    <a href="#chest-section" data-target="chest-section">Unlock the Chest</a>
+    <a href="#final-section" data-target="final-section">Happy Birthday</a>
+    <a href="#cake-section" data-target="cake-section">Blow the Candle</a>
+  </nav>
+
+  <section class="hero" id="home">
+    <div class="eyebrow">a little something for</div>
+    <h1 id="hero-name">Her Name</h1>
+    <p class="sub">Placeholder line — swap in the real words once everything else is set.</p>
+    <div class="date-line" id="hero-date">27 AUGUST</div>
+    <div class="scroll-cue">wander down</div>
+  </section>
+
+  <section id="key-game-section">
+    <div class="section-head">
+      <div class="eyebrow">a tiny hunt</div>
+      <h2>Catch the Key</h2>
+      <p class="hint" id="key-hint">tap the key — it won't sit still.</p>
+    </div>
+    <div class="key-arena-wrap">
+      <div class="key-arena" id="key-arena">
+        <div class="key-counter" id="key-counter">0 / 3 taps</div>
+        <button class="key-sprite" id="key-sprite" aria-label="the key">🔑</button>
+      </div>
+    </div>
+    <div class="key-caught-badge" id="key-caught-badge">🔑 caught — carry it down to the chest</div>
+  </section>
+
+  <section id="chest-section">
+    <div class="section-head">
+      <div class="eyebrow">almost there</div>
+      <h2>Unlock the Chest</h2>
+    </div>
+    <div class="chest-wrap" id="chest-wrap">
+      <div class="chest-lock-overlay" id="chest-overlay"><span>🔒</span><p>Catch the key above first</p></div>
+      <div class="held-key" id="held-key" style="display:none;">🔑</div>
+      <div class="chains" id="chains">
+        <span>⛓️⛓️⛓️⛓️⛓️</span>
+        <span>⛓️⛓️⛓️⛓️⛓️</span>
+        <span>⛓️⛓️⛓️⛓️⛓️</span>
+      </div>
+      <div class="chest-lid" id="chest-lid"></div>
+      <div class="chest-glow" id="chest-glow"></div>
+      <div class="chest-body"></div>
+      <div class="chest-lock" id="chest-lock">🔒</div>
+    </div>
+    <p class="chest-hint" id="chest-hint">Drag the key onto the chest — or just tap the chest once it's in your hand.</p>
+  </section>
+
+  <div class="below-chest-wrap" id="below-chest-wrap">
+    <div class="final-lock-overlay" id="final-overlay">
+      <div class="icon floaty">🔒</div>
+      <p>everything below unlocks once the chest above is open</p>
+    </div>
+    <div class="final-inner locked" id="final-inner">
+      <div class="polaroid-field" id="polaroid-field" aria-hidden="true"></div>
+
+      <section id="final-section">
+        <div class="wish">
+          <h2>Happy Birthday</h2>
+          <p>This is placeholder text for the rest of the page — the real message, photos and little extras go here once you're ready to build them out.</p>
+          <div class="signoff">with love</div>
+        </div>
+        <div class="photo-grid">
+          <div class="photo-card">add a photo</div>
+          <div class="photo-card">add a photo</div>
+          <div class="photo-card">add a photo</div>
+        </div>
+      </section>
+
+      <section id="cake-section">
+        <div class="section-head">
+          <div class="eyebrow">make a wish</div>
+          <h2>Blow Out the Candle</h2>
+        </div>
+        <div class="cake-wrap">
+          <div class="cake">
+            <div class="flame" id="flame"></div>
+            <div class="candle"></div>
+            <div class="tier top"></div>
+            <div class="tier bottom"></div>
+          </div>
+          <button class="blow-btn" id="blow-btn">Blow it out</button>
+          <p class="cake-msg" id="cake-msg">Wish made. It's already on its way.</p>
+        </div>
+      </section>
     </div>
   </div>
 
-  <div id="flash"></div>
-
-
-  <div class="overlay" id="introOverlay">
-    <div class="eyebrow">Sector 7 // Incoming</div>
-    <h1 class="title">DRIFTBREAKER</h1>
-    <p class="sub">Drag or move to steer. Your cannons fire on their own.<br>Survive the 60-second drift. Every wreck is points.</p>
-    <div class="tap-pulse" id="tapToPlay">▶ Tap to Play</div>
-  </div>
-
-
-  <div class="overlay hidden" id="endOverlay">
-    <div class="eyebrow" id="endEyebrow">Run Complete</div>
-    <h1 class="title" id="endTitle">Sector Cleared</h1>
-    <div class="stat-row">
-      <div class="stat"><span class="n" id="endScore">0</span><span class="l">Score</span></div>
-      <div class="stat"><span class="n best" id="endBest">0</span><span class="l">Best (session)</span></div>
-    </div>
-    <button class="retry-btn" id="retryBtn">Fly Again</button>
-  </div>
-
-  <div class="hint">move to steer · auto-fire armed</div>
+  <footer>made with a little bit of chaos, just for her</footer>
 </div>
 
 <script>
-(function(){
-  "use strict";
-
-  const CONFIG = {
-    DURATION_SEC: 60,
-    LIVES: 3,
-
-    PLAYER: {
-      RADIUS: 14,
-      FOLLOW_EASE: 0.22,      
-      FIRE_COOLDOWN: 0.16,    
-      BULLET_SPEED: 620,
-      INVULN_AFTER_HIT: 1.4,
-    },
-
-    ENEMY: {
-      BASE_SPAWN_INTERVAL: 1.05,   
-      MIN_SPAWN_INTERVAL: 0.35,
-      SPEED_MIN: 90,
-      SPEED_MAX: 190,
-      RADIUS_MIN: 12,
-      RADIUS_MAX: 22,
-      SCORE_PER_KILL: 10,
-    },
-
-    STARS: { COUNT: 90 },
-
-    DIFFICULTY_RAMP: 0.014, 
-  };
-
-
-  const root      = document.getElementById('driftbreaker-root');
-  const canvas    = document.getElementById('gameCanvas');
-  const ctx       = canvas.getContext('2d');
-  const hud       = document.getElementById('hud');
-  const hudScore  = document.getElementById('hudScore');
-  const hudLives  = document.getElementById('hudLives');
-  const introOv   = document.getElementById('introOverlay');
-  const endOv     = document.getElementById('endOverlay');
-  const tapToPlay = document.getElementById('tapToPlay');
-  const retryBtn  = document.getElementById('retryBtn');
-  const endScoreEl= document.getElementById('endScore');
-  const endBestEl = document.getElementById('endBest');
-  const endTitle  = document.getElementById('endTitle');
-  const endEyebrow= document.getElementById('endEyebrow');
-  const flashEl   = document.getElementById('flash');
-
-
-  let W = 0, H = 0, DPR = 1;
-  function resize(){
-    const rect = root.getBoundingClientRect();
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = rect.width; H = rect.height;
-    canvas.width  = Math.round(W * DPR);
-    canvas.height = Math.round(H * DPR);
-    ctx.setTransform(DPR,0,0,DPR,0,0);
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-
-  const Input = (function(){
-    const pointer = { x: null, y: null, active:false };
-    const keys = {};
-
-    function toLocal(clientX, clientY){
-      const r = canvas.getBoundingClientRect();
-      return { x: clientX - r.left, y: clientY - r.top };
+  /* ---------- Decorative particles ---------- */
+  (function(){
+    const decor = document.getElementById('decor');
+    for(let i=0;i<26;i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 2 + Math.random()*3;
+      p.style.width = size+'px'; p.style.height = size+'px';
+      p.style.left = Math.random()*100+'vw'; p.style.top = Math.random()*100+'vh';
+      p.style.animationDelay = (Math.random()*4)+'s';
+      decor.appendChild(p);
     }
-
-    root.addEventListener('pointerdown', e=>{
-      pointer.active = true;
-      const p = toLocal(e.clientX, e.clientY);
-      pointer.x = p.x; pointer.y = p.y;
-    });
-    root.addEventListener('pointermove', e=>{
-      if(!pointer.active && e.pointerType === 'mouse'){
-
-        const p = toLocal(e.clientX, e.clientY);
-        pointer.x = p.x; pointer.y = p.y;
-        return;
-      }
-      if(!pointer.active) return;
-      const p = toLocal(e.clientX, e.clientY);
-      pointer.x = p.x; pointer.y = p.y;
-    });
-    window.addEventListener('pointerup', ()=> pointer.active = false);
-
-    window.addEventListener('keydown', e=>{ keys[e.key.toLowerCase()] = true; });
-    window.addEventListener('keyup',   e=>{ keys[e.key.toLowerCase()] = false; });
-
-    return {
-      getPointer(){ return pointer; },
-      getKeys(){ return keys; },
-    };
   })();
 
+  /* ---------- Floating polaroid stickers (everything below the chest) ---------- */
+  (function(){
+    const field = document.getElementById('polaroid-field');
+    if(!field) return;
+    const palette = ['#E093B0','#B291E0','#9CC488','#F3D2E1','#CBAA71','#F9F0F2'];
+    const STICKER_COUNT = 9;
+    for(let i=0;i<STICKER_COUNT;i++){
+      const s = document.createElement('div');
+      s.className = 'polaroid-sticker';
+      // Anchor by a fixed pixel margin from the left/right edge — not a percentage — so a
+      // fixed-width card can never get pushed past the edge of the screen on narrow viewports.
+      const onLeft = i % 2 === 0;
+      const margin = 6 + Math.random()*20; // 6-26px in from the edge
+      const top = 4 + Math.random()*88; // % of the (tall) locked zone, kept off the very top/bottom
+      const rot = (Math.random()*26 - 13).toFixed(1);
+      const dur = (4.5 + Math.random()*3).toFixed(2);
+      const delay = (Math.random()*3).toFixed(2);
+      if(onLeft){ s.style.left = margin + 'px'; } else { s.style.right = margin + 'px'; }
+      s.style.top = top + '%';
+      s.style.setProperty('--rot', rot + 'deg');
+      s.style.setProperty('--dur', dur + 's');
+      s.style.setProperty('--delay', delay + 's');
+      const photo = document.createElement('div');
+      photo.className = 'photo';
+      const c1 = palette[Math.floor(Math.random()*palette.length)];
+      const c2 = palette[Math.floor(Math.random()*palette.length)];
+      photo.style.background = 'linear-gradient(135deg,' + c1 + ',' + c2 + ')';
+      s.appendChild(photo);
+      field.appendChild(s);
+    }
+  })();
 
-  class Starfield{
-    constructor(count){
-      this.stars = Array.from({length: count}, () => this.spawnStar(true));
-    }
-    spawnStar(randomY){
-      return {
-        x: Math.random() * W,
-        y: randomY ? Math.random() * H : -4,
-        r: Math.random() * 1.6 + 0.3,
-        speed: Math.random() * 40 + 20,
-        tw: Math.random() * Math.PI * 2,
-      };
-    }
-    update(dt){
-      for(const s of this.stars){
-        s.y += s.speed * dt;
-        s.tw += dt * 2;
-        if(s.y > H){ Object.assign(s, this.spawnStar(false)); }
-      }
-    }
-    draw(ctx){
-      for(const s of this.stars){
-        const alpha = 0.5 + Math.sin(s.tw) * 0.4;
-        ctx.globalAlpha = Math.max(0.15, alpha);
-        ctx.fillStyle = '#cfe0ff';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-    }
+  /* ---------- Sound helpers ---------- */
+  let audioCtx;
+  function getCtx(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+  function playChime(){
+    try{
+      const ctx = getCtx();
+      [880,1108,1318,1568].forEach((f,i)=>{
+        const osc = ctx.createOscillator(); const gain = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.value = f;
+        const t = ctx.currentTime + i*0.09;
+        gain.gain.setValueAtTime(0,t);
+        gain.gain.linearRampToValueAtTime(0.18,t+0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001,t+0.5);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(t); osc.stop(t+0.5);
+      });
+    }catch(e){}
+  }
+  function playBoom(){
+    try{
+      const ctx = getCtx();
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(120, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime+0.4);
+      gain.gain.setValueAtTime(0.35, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.45);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime+0.45);
+    }catch(e){}
+  }
+  function playPopSoft(){
+    try{
+      const ctx = getCtx();
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(300, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime+0.08);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.15);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime+0.15);
+    }catch(e){}
+  }
+  function playBlow(){
+    try{
+      const ctx = getCtx(); const dur = 0.6;
+      const buffer = ctx.createBuffer(1, ctx.sampleRate*dur, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<data.length;i++){ data[i] = (Math.random()*2-1) * (1 - i/data.length); }
+      const noise = ctx.createBufferSource(); noise.buffer = buffer;
+      const filter = ctx.createBiquadFilter(); filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1200, ctx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(200, ctx.currentTime+dur);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.5, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+dur);
+      noise.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      noise.start(); noise.stop(ctx.currentTime+dur);
+    }catch(e){}
   }
 
-  class Player{
-    constructor(){
-      this.x = W/2; this.y = H*0.78;
-      this.r = CONFIG.PLAYER.RADIUS;
-      this.cooldown = 0;
-      this.invuln = 0;
-    }
-    update(dt, target){
-      if(target){
-        this.x += (target.x - this.x) * CONFIG.PLAYER.FOLLOW_EASE;
-        this.y += (target.y - this.y) * CONFIG.PLAYER.FOLLOW_EASE;
-      }
-      const keys = Input.getKeys();
-      const kSpeed = 340 * dt;
-      if(keys['arrowleft']  || keys['a']) this.x -= kSpeed;
-      if(keys['arrowright'] || keys['d']) this.x += kSpeed;
-      if(keys['arrowup']    || keys['w']) this.y -= kSpeed;
-      if(keys['arrowdown']  || keys['s']) this.y += kSpeed;
+  /* ---------- Shared effect duration ----------
+     Confetti, balloons and fireworks are all timed off this one value so a
+     "celebrate" burst always feels like a single, evenly-paced moment. */
+  const EFFECT_DURATION = 6000; // ms
 
-      this.x = Math.max(this.r+4, Math.min(W-this.r-4, this.x));
-      this.y = Math.max(this.r+4, Math.min(H-this.r-4, this.y));
-
-      if(this.cooldown > 0) this.cooldown -= dt;
-      if(this.invuln > 0) this.invuln -= dt;
-    }
-    canFire(){ return this.cooldown <= 0; }
-    fire(){ this.cooldown = CONFIG.PLAYER.FIRE_COOLDOWN; }
-    draw(ctx){
-      const flicker = this.invuln > 0 && Math.floor(this.invuln*16)%2===0;
-      if(flicker) return;
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      const grd = ctx.createRadialGradient(0,-4,2,0,0,this.r*2.4);
-      grd.addColorStop(0, 'rgba(63,240,208,0.55)');
-      grd.addColorStop(1, 'rgba(63,240,208,0)');
-      ctx.fillStyle = grd;
-      ctx.beginPath(); ctx.arc(0,0,this.r*2.4,0,Math.PI*2); ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(0, -this.r*1.3);
-      ctx.lineTo(this.r*0.9, this.r*0.9);
-      ctx.lineTo(0, this.r*0.45);
-      ctx.lineTo(-this.r*0.9, this.r*0.9);
-      ctx.closePath();
-      ctx.fillStyle = '#eafffb';
-      ctx.strokeStyle = '#3ff0d0';
-      ctx.lineWidth = 1.5;
-      ctx.fill(); ctx.stroke();
-      ctx.restore();
-    }
-  }
-
-  class Bullet{
-    constructor(x,y,vy,friendly){
-      this.x=x; this.y=y; this.vy=vy; this.friendly=friendly;
-      this.r = friendly ? 3.2 : 3.6;
-      this.dead=false;
-    }
-    update(dt){
-      this.y += this.vy*dt;
-      if(this.y < -20 || this.y > H+20) this.dead = true;
-    }
-    draw(ctx){
-      ctx.fillStyle = this.friendly ? '#9ffff0' : '#ff8fae';
-      ctx.shadowColor = this.friendly ? '#3ff0d0' : '#ff3f8f';
-      ctx.shadowBlur = 8;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-  }
-
-  class Enemy{
-    constructor(){
-      this.r = CONFIG.ENEMY.RADIUS_MIN + Math.random()*(CONFIG.ENEMY.RADIUS_MAX-CONFIG.ENEMY.RADIUS_MIN);
-      this.x = this.r + Math.random()*(W - this.r*2);
-      this.y = -this.r - 10;
-      this.speed = CONFIG.ENEMY.SPEED_MIN + Math.random()*(CONFIG.ENEMY.SPEED_MAX-CONFIG.ENEMY.SPEED_MIN);
-      this.hp = this.r > 17 ? 2 : 1;
-      this.wobble = Math.random()*Math.PI*2;
-      this.dead = false;
-    }
-    update(dt){
-      this.y += this.speed*dt;
-      this.wobble += dt*3;
-      this.x += Math.sin(this.wobble)*0.6;
-      if(this.y - this.r > H) this.dead = true;
-    }
-    hit(){
-      this.hp -= 1;
-      return this.hp <= 0;
-    }
-    draw(ctx){
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      ctx.rotate(this.wobble*0.15);
-      ctx.fillStyle = this.hp > 1 ? '#4a2e73' : '#2a1a4d';
-      ctx.strokeStyle = '#ff3f8f';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      const spikes = 5;
-      for(let i=0;i<spikes;i++){
-        const a = (i/spikes)*Math.PI*2;
-        const rad = i%2===0 ? this.r : this.r*0.6;
-        const px = Math.cos(a)*rad, py = Math.sin(a)*rad;
-        i===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
-      }
-      ctx.closePath();
-      ctx.fill(); ctx.stroke();
-      ctx.restore();
-    }
-  }
-
-  class Particle{
-    constructor(x,y,color){
-      this.x=x; this.y=y;
-      const a = Math.random()*Math.PI*2, s = Math.random()*160+40;
-      this.vx = Math.cos(a)*s; this.vy = Math.sin(a)*s;
-      this.life = 0.5 + Math.random()*0.4;
-      this.maxLife = this.life;
-      this.color = color;
-      this.r = Math.random()*2.2+1;
-    }
-    update(dt){
-      this.x += this.vx*dt; this.y += this.vy*dt;
-      this.vx *= 0.92; this.vy *= 0.92;
-      this.life -= dt;
-    }
-    get dead(){ return this.life <= 0; }
-    draw(ctx){
-      ctx.globalAlpha = Math.max(0, this.life/this.maxLife);
-      ctx.fillStyle = this.color;
-      ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-  }
-
-
-  const STATE = { INTRO:'intro', PLAYING:'playing', END:'end' };
-
-  const Game = {
-    state: STATE.INTRO,
-    stars: new Starfield(CONFIG.STARS.COUNT),
-    player: null,
-    bullets: [],
-    enemyBullets: [],
-    enemies: [],
-    particles: [],
-    score: 0,
-    best: 0,
-    lives: CONFIG.LIVES,
-    timeLeft: CONFIG.DURATION_SEC,
-    spawnTimer: 0,
-    lastTs: 0,
-
-    reset(){
-      this.player = new Player();
-      this.bullets = []; this.enemies = []; this.particles = [];
-      this.score = 0;
-      this.lives = CONFIG.LIVES;
-      this.timeLeft = CONFIG.DURATION_SEC; 
-      this.spawnTimer = 0;
-      UI.updateScore(0);
-      UI.updateLives(this.lives);
-    },
-
-    start(){
-      this.reset();
-      this.state = STATE.PLAYING;
-      UI.showPlaying();
-    },
-
-    end(reason){
-      this.state = STATE.END;
-      this.best = Math.max(this.best, this.score);
-      UI.showEnd(reason, this.score, this.best);
-    },
-
-    spawnEnemy(){
-      this.enemies.push(new Enemy());
-    },
-
-    explode(x,y,color,count){
-      for(let i=0;i<count;i++) this.particles.push(new Particle(x,y,color));
-    },
-
-    update(dt){
-      this.stars.update(dt);
-      if(this.state !== STATE.PLAYING) return;
-
-
-      this.timeLeft -= dt;
-      if(this.timeLeft <= 0){
-        this.timeLeft = 0;
-        this.end('time');
-        return;
-      }
-
-
-      const elapsed = CONFIG.DURATION_SEC - this.timeLeft;
-      const interval = Math.max(
-        CONFIG.ENEMY.MIN_SPAWN_INTERVAL,
-        CONFIG.ENEMY.BASE_SPAWN_INTERVAL * (1 - elapsed*CONFIG.DIFFICULTY_RAMP)
-      );
-      this.spawnTimer -= dt;
-      if(this.spawnTimer <= 0){
-        this.spawnEnemy();
-        this.spawnTimer = interval * (0.7 + Math.random()*0.6);
-      }
-
-
-      const p = Input.getPointer();
-      const target = (p.x!=null) ? {x:p.x, y:p.y} : null;
-      this.player.update(dt, target);
-      if(this.player.canFire()){
-        this.player.fire();
-        this.bullets.push(new Bullet(this.player.x, this.player.y - this.player.r, -CONFIG.PLAYER.BULLET_SPEED, true));
-      }
-
-
-      for(const b of this.bullets) b.update(dt);
-      this.bullets = this.bullets.filter(b=>!b.dead);
-
-
-      for(const e of this.enemies) e.update(dt);
-
-      for(const b of this.bullets){
-        for(const e of this.enemies){
-          if(e.dead) continue;
-          const dx=b.x-e.x, dy=b.y-e.y;
-          if(dx*dx+dy*dy < (e.r+b.r)*(e.r+b.r)){
-            b.dead = true;
-            if(e.hit()){
-              e.dead = true;
-              this.score += CONFIG.ENEMY.SCORE_PER_KILL;
-              UI.updateScore(this.score);
-              this.explode(e.x, e.y, '#ff3f8f', 14);
-            } else {
-              this.explode(b.x,b.y,'#9ffff0',4);
-            }
-            break;
-          }
-        }
-      }
-      this.bullets = this.bullets.filter(b=>!b.dead);
-
-      if(this.player.invuln <= 0){
-        for(const e of this.enemies){
-          if(e.dead) continue;
-          const dx=this.player.x-e.x, dy=this.player.y-e.y;
-          if(dx*dx+dy*dy < (e.r+this.player.r)*(e.r+this.player.r)){
-            e.dead = true;
-            this.lives -= 1;
-            this.player.invuln = CONFIG.PLAYER.INVULN_AFTER_HIT;
-            UI.updateLives(this.lives);
-            this.explode(this.player.x, this.player.y, '#3ff0d0', 20);
-            UI.flash();
-            if(this.lives <= 0){
-              this.end('destroyed');
-              return;
-            }
-            break;
-          }
-        }
-      }
-
-      this.enemies = this.enemies.filter(e=>!e.dead);
-
-      for(const pt of this.particles) pt.update(dt);
-      this.particles = this.particles.filter(pt=>!pt.dead);
-    },
-
-    draw(){
-      ctx.clearRect(0,0,W,H);
-      this.stars.draw(ctx);
-      if(this.state === STATE.PLAYING || this.state === STATE.END){
-        for(const e of this.enemies) e.draw(ctx);
-        for(const b of this.bullets) b.draw(ctx);
-        for(const pt of this.particles) pt.draw(ctx);
-        if(this.player) this.player.draw(ctx);
-      }
-    },
-
-    loop(ts){
-      if(!this.lastTs) this.lastTs = ts;
-      let dt = (ts - this.lastTs)/1000;
-      dt = Math.min(dt, 0.05); 
-      this.lastTs = ts;
-
-      this.update(dt);
-      this.draw();
-
-      requestAnimationFrame(this.loop.bind(this));
-    }
-  };
-
-  const UI = {
-    updateScore(v){ hudScore.textContent = v; },
-    updateLives(n){
-      hudLives.innerHTML = '';
-      for(let i=0;i<CONFIG.LIVES;i++){
-        const dot = document.createElement('span');
-        dot.className = 'life-dot' + (i < n ? '' : ' spent');
-        hudLives.appendChild(dot);
-      }
-    },
-    showPlaying(){
-      introOv.classList.add('hidden');
-      endOv.classList.add('hidden');
-      hud.classList.add('visible');
-    },
-    showEnd(reason, score, best){
-      hud.classList.remove('visible');
-      endEyebrow.textContent = reason === 'destroyed' ? 'Hull Breached' : 'Run Complete';
-      endTitle.textContent   = reason === 'destroyed' ? 'Ship Lost' : 'Sector Cleared';
-      endScoreEl.textContent = score;
-      endBestEl.textContent  = best;
-      endOv.classList.remove('hidden');
-    },
-    showIntro(){
-      endOv.classList.add('hidden');
-      hud.classList.remove('visible');
-      introOv.classList.remove('hidden');
-    },
-    flash(){
-      flashEl.style.transition = 'none';
-      flashEl.style.opacity = '0.5';
-      requestAnimationFrame(()=>{
-        flashEl.style.transition = 'opacity .3s ease';
-        flashEl.style.opacity = '0';
+  /* ---------- Confetti ---------- */
+  function launchConfetti(duration){
+    duration = duration || EFFECT_DURATION;
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const colors = ['#E093B0','#B291E0','#9CC488','#F3D2E1','#CBAA71','#F9F0F2'];
+    let pieces = [];
+    for(let i=0;i<160;i++){
+      pieces.push({
+        x: Math.random()*canvas.width, y: -20 - Math.random()*canvas.height*0.5,
+        w: 6+Math.random()*6, h: 8+Math.random()*8, c: colors[Math.floor(Math.random()*colors.length)],
+        speed: 2+Math.random()*3, drift: (Math.random()-0.5)*2, rot: Math.random()*360, rotSpeed: (Math.random()-0.5)*8
       });
     }
-  };
--
-  function beginRun(){
-    if(Game.state === STATE.PLAYING) return;
-    Game.start();
+    const totalFrames = Math.round(duration / 1000 * 60);
+    let frame = 0;
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pieces.forEach(p=>{
+        p.y += p.speed; p.x += p.drift; p.rot += p.rotSpeed;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+        ctx.fillStyle = p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+      });
+      frame++;
+      if(frame < totalFrames){ requestAnimationFrame(draw); } else{ ctx.clearRect(0,0,canvas.width,canvas.height); }
+    }
+    draw();
   }
-  tapToPlay.addEventListener('pointerdown', beginRun);
-  retryBtn.addEventListener('pointerdown', (e)=>{ e.stopPropagation(); beginRun(); });
 
-  Game.player = new Player();
-  requestAnimationFrame(Game.loop.bind(Game));
+  /* ---------- Balloons ---------- */
+  function launchBalloons(duration){
+    duration = duration || EFFECT_DURATION;
+    const layer = document.getElementById('balloon-layer');
+    const colors = ['#E093B0','#B291E0','#F3D2E1','#CBAA71','#9CC488'];
+    playPopSoft();
+    const maxDelay = duration * 0.15; // stagger launches within the first slice of the shared duration
+    for(let i=0;i<14;i++){
+      const b = document.createElement('div');
+      b.className = 'balloon';
+      b.style.left = (5 + Math.random()*90) + 'vw';
+      b.style.background = colors[Math.floor(Math.random()*colors.length)];
+      b.style.setProperty('--drift', (Math.random()*80-40)+'px');
+      b.style.setProperty('--wob', (Math.random()*16-8)+'deg');
+      const delay = Math.random()*maxDelay;
+      b.style.animationDuration = (duration/1000) + 's';
+      b.style.animationDelay = (delay/1000) + 's';
+      layer.appendChild(b);
+      setTimeout(()=>b.remove(), duration + delay + 500);
+    }
+  }
 
-})();
+  /* ---------- Fireworks ---------- */
+  function launchFireworks(duration){
+    duration = duration || EFFECT_DURATION;
+    const canvas = document.getElementById('fireworks-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const colors = ['#E093B0','#B291E0','#9CC488','#F3D2E1','#CBAA71'];
+    let bursts = [];
+    const burstLifeFrames = 70; // ~1.16s at 60fps
+    const burstLifeMs = burstLifeFrames / 60 * 1000;
+    const spawnCountTarget = 6;
+    const spawnWindow = Math.max(200, duration - burstLifeMs);
+    const spawnInterval = spawnWindow / spawnCountTarget;
+    function addBurst(){
+      const x = canvas.width*(0.2+Math.random()*0.6);
+      const y = canvas.height*(0.15+Math.random()*0.35);
+      const color = colors[Math.floor(Math.random()*colors.length)];
+      const particles = [];
+      const count = 34;
+      for(let i=0;i<count;i++){
+        const angle = (Math.PI*2*i)/count;
+        const speed = 1.5+Math.random()*2.4;
+        particles.push({ x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed });
+      }
+      bursts.push({ particles, color, age:0 });
+      playBoom();
+    }
+    let spawnCount = 0;
+    const spawnTimer = setInterval(()=>{ addBurst(); spawnCount++; if(spawnCount >= spawnCountTarget) clearInterval(spawnTimer); }, spawnInterval);
+    function draw(){
+      // Fade the previous frame's particle trails by eroding alpha (destination-out) instead of
+      // painting a translucent dark rectangle over the whole canvas — the old approach compounded
+      // frame after frame and visibly darkened the entire screen toward black during fireworks.
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.restore();
+      bursts.forEach(b=>{
+        b.age++;
+        b.particles.forEach(p=>{
+          p.x += p.vx; p.y += p.vy; p.vy += 0.02;
+          ctx.beginPath(); ctx.arc(p.x,p.y,1.8,0,Math.PI*2);
+          ctx.fillStyle = b.color; ctx.globalAlpha = Math.max(0, 1 - b.age/burstLifeFrames); ctx.fill();
+        });
+      });
+      ctx.globalAlpha = 1;
+      bursts = bursts.filter(b=>b.age < burstLifeFrames);
+      if(spawnCount < spawnCountTarget || bursts.length){ requestAnimationFrame(draw); } else{ ctx.clearRect(0,0,canvas.width,canvas.height); }
+    }
+    draw();
+  }
+  function celebrate(duration){
+    duration = duration || EFFECT_DURATION;
+    const celebration = document.getElementById('celebration');
+    celebration.classList.add('on');
+    launchConfetti(duration); launchBalloons(duration); launchFireworks(duration);
+    setTimeout(()=> celebration.classList.remove('on'), duration + 400);
+  }
+
+  /* ================= PRELOADER ================= */
+  const MIN_LOAD_MS = 3000;
+  const preloader = document.getElementById('preloader');
+  const loadStart = Date.now();
+  function hidePreloader(){
+    const elapsed = Date.now() - loadStart;
+    const wait = Math.max(0, MIN_LOAD_MS - elapsed);
+    setTimeout(()=> preloader.classList.add('hidden'), wait);
+  }
+  if(document.readyState === 'complete'){ hidePreloader(); }
+  else{ window.addEventListener('load', hidePreloader); }
+  setTimeout(hidePreloader, MIN_LOAD_MS + 4000); // safety net
+
+  /* ================= COUNTDOWN + FLIP + LOCK ================= */
+  let TARGET = new Date(2026, 7, 27, 0, 0, 0); // Aug 27, 2026 — placeholder birthday
+  const lockScreen = document.getElementById('lock-screen');
+  const siteEl = document.getElementById('site');
+  const flipInner = document.getElementById('flip-inner');
+  let unlocked = false;
+  let flipping = false;
+  let countdownTimer = null;
+
+  function updateLockCountdown(){
+    const now = new Date();
+    let diff = TARGET - now;
+    if(diff <= 0){
+      document.getElementById('lk-days').textContent = '0';
+      document.getElementById('lk-hours').textContent = '00';
+      document.getElementById('lk-mins').textContent = '00';
+      document.getElementById('lk-secs').textContent = '00';
+      if(!unlocked && !flipping) startFlipSequence();
+      return;
+    }
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const mins = Math.floor((diff / (1000*60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+    document.getElementById('lk-days').textContent = days;
+    document.getElementById('lk-hours').textContent = String(hours).padStart(2,'0');
+    document.getElementById('lk-mins').textContent = String(mins).padStart(2,'0');
+    document.getElementById('lk-secs').textContent = String(secs).padStart(2,'0');
+  }
+
+  function startFlipSequence(){
+    flipping = true;
+    flipInner.classList.add('flipped');
+    playChime();
+    setTimeout(()=>{ triggerUnlock(); }, 1100 + 1700);
+  }
+
+  function unlockScroll(){
+    document.documentElement.classList.remove('scroll-locked');
+    document.body.classList.remove('scroll-locked');
+  }
+
+  function triggerUnlock(){
+    unlocked = true;
+    // Reveal the main site first, smoothly — no dark hold screen behind the celebration.
+    // The confetti/balloons/fireworks then burst directly over the (already brightening) page.
+    lockScreen.classList.add('hidden');
+    siteEl.classList.add('revealed');
+    unlockScroll();
+    try{ localStorage.setItem('bday_unlocked_seen','1'); }catch(e){}
+    setTimeout(()=> celebrate(), 250);
+  }
+
+  function initLockState(){
+    const now = new Date();
+    let seenBefore = false;
+    try{ seenBefore = localStorage.getItem('bday_unlocked_seen') === '1'; }catch(e){}
+    if(now >= TARGET || seenBefore){
+      unlocked = true;
+      lockScreen.classList.add('hidden');
+      siteEl.classList.add('revealed');
+      unlockScroll();
+      if(countdownTimer){ clearInterval(countdownTimer); countdownTimer = null; }
+    } else {
+      unlocked = false; flipping = false;
+      lockScreen.classList.remove('hidden');
+      siteEl.classList.remove('revealed');
+      flipInner.classList.remove('flipped');
+      document.documentElement.classList.add('scroll-locked');
+      document.body.classList.add('scroll-locked');
+      updateLockCountdown();
+      if(countdownTimer) clearInterval(countdownTimer);
+      countdownTimer = setInterval(updateLockCountdown, 1000);
+    }
+  }
+  initLockState();
+
+  /* ---------- Scroll reveal (light) ---------- */
+  const revealEls = document.querySelectorAll('.section-head, .key-arena-wrap, .chest-wrap, .cake-wrap');
+  revealEls.forEach(el=>{ el.style.opacity='0'; el.style.transform='translateY(20px)'; el.style.transition='opacity 0.8s ease, transform 0.8s ease'; });
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach((entry)=>{
+      if(entry.isIntersecting){
+        entry.target.style.opacity='1'; entry.target.style.transform='translateY(0)';
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  /* ================= HAMBURGER NAV ================= */
+  (function(){
+    const toggle = document.getElementById('nav-toggle');
+    const panel = document.getElementById('nav-panel');
+    const scrim = document.getElementById('nav-scrim');
+    if(!toggle || !panel || !scrim) return;
+    const links = Array.from(panel.querySelectorAll('a[data-target]'));
+
+    function openNav(){
+      toggle.classList.add('open'); panel.classList.add('open'); scrim.classList.add('open');
+      toggle.setAttribute('aria-expanded','true');
+    }
+    function closeNav(){
+      toggle.classList.remove('open'); panel.classList.remove('open'); scrim.classList.remove('open');
+      toggle.setAttribute('aria-expanded','false');
+    }
+    toggle.addEventListener('click', ()=> panel.classList.contains('open') ? closeNav() : openNav());
+    scrim.addEventListener('click', closeNav);
+
+    links.forEach(link=>{
+      link.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const target = document.getElementById(link.getAttribute('data-target'));
+        if(target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+        closeNav();
+      });
+    });
+
+    // Highlight whichever section is currently in view
+    const navSections = links
+      .map(l=>document.getElementById(l.getAttribute('data-target')))
+      .filter(Boolean);
+    const navObserver = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        const link = links.find(l=>l.getAttribute('data-target') === entry.target.id);
+        if(!link) return;
+        links.forEach(l=>l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    }, { threshold:0.35, rootMargin:'-15% 0px -55% 0px' });
+    navSections.forEach(s=>navObserver.observe(s));
+  })();
+
+  /* ================= CATCH THE KEY GAME ================= */
+  const keyArena = document.getElementById('key-arena');
+  const keySprite = document.getElementById('key-sprite');
+  const keyHint = document.getElementById('key-hint');
+  const keyCounter = document.getElementById('key-counter');
+  const keyCaughtBadge = document.getElementById('key-caught-badge');
+  let keyClicks = 0;
+  let keyPhase = 'idle'; // idle -> running -> caught
+  let keyRunInterval = null;
+
+  function moveKeyRandom(){
+    const w = keyArena.clientWidth, h = keyArena.clientHeight;
+    const size = 52;
+    const maxX = Math.max(10, w - size), maxY = Math.max(10, h - size);
+    keySprite.style.left = (Math.random()*maxX) + 'px';
+    keySprite.style.top = (Math.random()*maxY) + 'px';
+  }
+  function updateKeyUI(){
+    if(keyPhase === 'idle'){
+      keyCounter.textContent = keyClicks + ' / 3 taps';
+      keyHint.textContent = keyClicks === 0 ? "tap the key — it won't sit still." : "it slipped away! " + (3-keyClicks) + ' more tap' + (3-keyClicks===1?'':'s') + ' and it bolts.';
+    } else if(keyPhase === 'running'){
+      keyCounter.textContent = 'running!';
+      keyHint.textContent = "it's running now — catch it!";
+    } else if(keyPhase === 'caught'){
+      keyCounter.textContent = 'caught';
+      keyHint.textContent = 'got it. 🔑';
+      keyCaughtBadge.classList.add('show');
+    }
+  }
+  function startKeyRunning(){
+    keyPhase = 'running';
+    keySprite.classList.add('running');
+    updateKeyUI();
+    moveKeyRandom();
+    if(keyRunInterval) clearInterval(keyRunInterval);
+    keyRunInterval = setInterval(moveKeyRandom, 650);
+  }
+  function catchKey(){
+    keyPhase = 'caught';
+    if(keyRunInterval){ clearInterval(keyRunInterval); keyRunInterval = null; }
+    keySprite.classList.remove('running');
+    keySprite.classList.add('caught');
+    updateKeyUI();
+    playPopSoft();
+    if(window.chestGame) window.chestGame.enable();
+  }
+  function resetKeyGame(){
+    keyClicks = 0; keyPhase = 'idle';
+    if(keyRunInterval){ clearInterval(keyRunInterval); keyRunInterval = null; }
+    keySprite.classList.remove('running','caught');
+    keySprite.style.left = 'calc(50% - 26px)'; keySprite.style.top = 'calc(50% - 26px)';
+    keyCaughtBadge.classList.remove('show');
+    updateKeyUI();
+    if(window.chestGame) window.chestGame.disable();
+  }
+  keySprite.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    if(keyPhase === 'caught') return;
+    if(keyPhase === 'idle'){
+      keyClicks++;
+      moveKeyRandom();
+      updateKeyUI();
+      if(keyClicks >= 3) startKeyRunning();
+    } else if(keyPhase === 'running'){
+      catchKey();
+    }
+  });
+  updateKeyUI();
+
+  /* =========================================================
+     CHEST — drag the key in (or tap once you're holding it)
+     to break the chains and unlock the rest of the site.
+  ========================================================= */
+  window.chestGame = (function(){
+    const wrap = document.getElementById("chest-wrap");
+    const overlay = document.getElementById("chest-overlay");
+    const heldKey = document.getElementById("held-key");
+    const chestLid = document.getElementById("chest-lid");
+    const chestLock = document.getElementById("chest-lock");
+    const chestGlow = document.getElementById("chest-glow");
+    const chains = document.getElementById("chains");
+    const chestHint = document.getElementById("chest-hint");
+
+    let enabled = false;
+    let chestUnlocked = false;
+    let dragging = false;
+
+    function enable(){
+      if(enabled) return;
+      enabled = true;
+      overlay.classList.add("hidden");
+      heldKey.style.display = "block";
+      chestHint.textContent = "Drag the key onto the chest — or just tap the chest once it's in your hand.";
+    }
+
+    function disable(){
+      enabled = false;
+      overlay.classList.remove("hidden");
+      heldKey.style.display = "none";
+    }
+
+    function resetHeldPosition(){
+      heldKey.style.left = "50%";
+      heldKey.style.top = "-46px";
+      heldKey.style.transform = "translate(-50%,0)";
+    }
+    resetHeldPosition();
+
+    function unlock(){
+      if(chestUnlocked || !enabled) return;
+      chestUnlocked = true;
+      chestLid.classList.add("open");
+      chestLock.classList.add("gone");
+      chestGlow.classList.add("show");
+      chains.classList.add("broken");
+      heldKey.style.display = "none";
+      chestHint.textContent = "Unlocked. Everything below is yours now.";
+
+      const celebration = document.getElementById("celebration");
+      celebration.classList.add("on");
+      launchConfetti(EFFECT_DURATION);
+      launchBalloons(EFFECT_DURATION);
+      setTimeout(()=>celebration.classList.remove("on"), EFFECT_DURATION + 400);
+
+      if(typeof unlockFinalSection === "function") unlockFinalSection();
+    }
+
+    function reset(){
+      chestUnlocked = false;
+      dragging = false;
+      chestLid.classList.remove("open");
+      chestLock.classList.remove("gone");
+      chestGlow.classList.remove("show");
+      chains.classList.remove("broken");
+      if(typeof relockFinalSection === "function") relockFinalSection();
+      resetHeldPosition();
+      disable();
+    }
+
+    wrap.addEventListener("click", function(){
+      if(enabled && !chestUnlocked && !dragging) unlock();
+    });
+
+    heldKey.addEventListener("pointerdown", function(e){
+      if(!enabled || chestUnlocked) return;
+      e.preventDefault();
+      dragging = true;
+      heldKey.classList.add("dragging");
+      try{ heldKey.setPointerCapture(e.pointerId); }catch(err){}
+    });
+
+    heldKey.addEventListener("pointermove", function(e){
+      if(!dragging) return;
+      const wrapRect = wrap.getBoundingClientRect();
+      const px = e.clientX - wrapRect.left;
+      const py = e.clientY - wrapRect.top;
+      heldKey.style.left = px + "px";
+      heldKey.style.top = py + "px";
+      heldKey.style.transform = "translate(-50%,-50%)";
+    });
+
+    function endDrag(e){
+      if(!dragging) return;
+      dragging = false;
+      heldKey.classList.remove("dragging");
+      const chestRect = wrap.getBoundingClientRect();
+      const cx = e.clientX, cy = e.clientY;
+      const within = cx >= chestRect.left && cx <= chestRect.right && cy >= chestRect.top && cy <= chestRect.bottom;
+      if(within){
+        unlock();
+      } else {
+        resetHeldPosition();
+      }
+    }
+    heldKey.addEventListener("pointerup", endDrag);
+    heldKey.addEventListener("pointercancel", endDrag);
+
+    return { enable, disable, unlock, reset };
+  })();
+
+// AFTER (Fixed)
+window.BdayDebug = window.BdayDebug || {};
+window.BdayDebug["unlock-chest"] = function(){ window.chestGame.enable(); window.chestGame.unlock(); };
+window.BdayDebug["reset-chest"]  = function(){ window.chestGame.reset(); };
+
+  /* ================= FINAL SECTION GATE ================= */
+  const finalInner = document.getElementById('final-inner');
+  const finalOverlay = document.getElementById('final-overlay');
+  function unlockFinalSection(){
+    finalInner.classList.remove('locked');
+    finalOverlay.classList.add('hidden');
+  }
+  function relockFinalSection(){
+    finalInner.classList.add('locked');
+    finalOverlay.classList.remove('hidden');
+  }
+
+  /* ================= CANDLE BLOW (ported from ref.html) ================= */
+  document.getElementById('blow-btn').addEventListener('click', () => {
+    document.getElementById('flame').classList.add('out');
+    document.getElementById('cake-msg').classList.add('show');
+    playBlow();
+  });
+
+  /* ================= DEBUG MENU ================= */
+  const debugToggle = document.getElementById('debug-toggle');
+  const debugPanel = document.getElementById('debug-panel');
+  const debugStatus = document.getElementById('debug-status');
+  debugToggle.addEventListener('click', ()=> debugPanel.classList.toggle('show'));
+  function setStatus(msg){ debugStatus.textContent = 'status: ' + msg; }
+
+  debugPanel.addEventListener('click', (e)=>{
+    const action = e.target.getAttribute('data-action');
+    if(!action) return;
+    switch(action){
+      case 'skip-preloader':
+        preloader.classList.add('hidden');
+        setStatus('preloader skipped');
+        break;
+      case 'force-unlock':
+        if(!unlocked && !flipping) startFlipSequence();
+        setStatus('forced birthday unlock');
+        break;
+      case 'soon-countdown':
+        TARGET = new Date(Date.now() + 10000);
+        try{ localStorage.removeItem('bday_unlocked_seen'); }catch(err){}
+        initLockState();
+        setStatus('countdown set to 10s');
+        break;
+      case 'relock':
+        try{ localStorage.removeItem('bday_unlocked_seen'); }catch(err){}
+        location.reload();
+        break;
+      case 'auto-catch-key':
+        if(keyPhase !== 'caught'){
+          keyClicks = 3;
+          keyPhase = 'running';
+          catchKey();
+        }
+        setStatus('key auto-caught');
+        break;
+      case 'reset-key':
+        resetKeyGame();
+        setStatus('key game reset');
+        break;
+      case 'unlock-chest':
+        if(window.chestGame){ window.chestGame.enable(); window.chestGame.unlock(); }
+        setStatus('chest force-opened');
+        break;
+      case 'reset-chest':
+        if(window.chestGame) window.chestGame.reset();
+        relockFinalSection();
+        setStatus('chest + final section reset');
+        break;
+      case 'fire-confetti':
+        document.getElementById('celebration').classList.add('on');
+        launchConfetti(EFFECT_DURATION);
+        setTimeout(()=>document.getElementById('celebration').classList.remove('on'), EFFECT_DURATION + 400);
+        break;
+      case 'fire-balloons':
+        document.getElementById('celebration').classList.add('on');
+        launchBalloons(EFFECT_DURATION);
+        setTimeout(()=>document.getElementById('celebration').classList.remove('on'), EFFECT_DURATION + 400);
+        break;
+      case 'fire-fireworks':
+        document.getElementById('celebration').classList.add('on');
+        launchFireworks(EFFECT_DURATION);
+        setTimeout(()=>document.getElementById('celebration').classList.remove('on'), EFFECT_DURATION + 400);
+        break;
+      case 'clear-all':
+        try{ localStorage.clear(); }catch(err){}
+        location.reload();
+        break;
+    }
+  });
 </script>
+
 </body>
 </html>
