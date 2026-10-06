@@ -241,10 +241,7 @@ function drawCart(){const it=cart.map(c=>({...c,p:P.find(p=>p.id==c.id)})).filte
  $('#ci').innerHTML=it.length?it.map(c=>`<div class="ci"><img src="${img(c.p)}"><div>${esc(c.p.name)}<br><small>${c.q} × ${tk(c.p.price)}</small></div><button onclick="rm('${c.id}')">×</button></div>`).join(''):'<p class="empty">Your cart is empty.</p>';
  $('#ck').style.display=it.length?'block':'none';$('#ct').textContent=tk(it.reduce((a,c)=>a+c.q*c.p.price,0))}
 const rid=()=>'FL-'+Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b%32]).join('');
-const lk=()=>{try{return +localStorage.getItem('fl_lock')||0}catch(e){return 0}};
-function tick(){const t=lk()-Date.now(),b=$('#po');if(t>0){b.disabled=true;b.dataset.l=1;b.textContent=`Next order in ${Math.floor(t/6e4)}:${String(Math.floor(t/1e3)%60).padStart(2,'0')}`}else if(b.dataset.l){b.dataset.l='';b.disabled=false;b.textContent='Place Order'}}
-setInterval(tick,1000);tick();
-$('#po').onclick=async()=>{if(lk()>Date.now())return toast('Please wait before placing another order');
+$('#po').onclick=async()=>{
  const n=$('#on').value.trim(),ph=$('#op').value.trim(),ad=$('#oa').value.trim();
  if(!n||!ph||!ad)return toast('Please fill name, phone and address');
  let pk=ph.replace(/\D/g,'');if(pk.startsWith('880'))pk=pk.slice(2);if(pk.length<10||pk.length>15)return toast('Please enter a valid phone number');
@@ -252,10 +249,9 @@ $('#po').onclick=async()=>{if(lk()>Date.now())return toast('Please wait before p
  if(!items.length)return;const id=rid(),o={n,ph,ad,pk,items,total:items.reduce((a,i)=>a+i.q*i.price,0),status:'Pending',date:Date.now()};
  $('#po').disabled=true;
  try{const b=db.batch();b.set(db.collection('locks').doc(pk),{at:firebase.firestore.FieldValue.serverTimestamp()});b.set(db.collection('orders').doc(id),o);b.set(db.collection('tracking').doc(id),{status:'Pending'});await b.commit();
-  try{localStorage.setItem('fl_lock',Date.now()+6e5)}catch(e){}
   cart=[];drawCart();cart_(false);['#on','#op','#oa'].forEach(s=>$(s).value='');$('#ti').value=id;toast('Order placed! Tracking ID: '+id)}
- catch(e){toast(e.code=='permission-denied'?'You ordered recently — please wait 10 minutes before ordering again':'Could not place order — please try again')}
- $('#po').disabled=false;tick()};
+ catch(e){console.error('Order failed:',e.code,e.message);toast(e.code=='permission-denied'?'Order was rejected (code: permission-denied). If this keeps happening, republish the latest Firestore rules.':'Could not place order — please try again')}
+ $('#po').disabled=false};
 /* track (public, status only) */
 $('#tb').onclick=async()=>{const v=$('#ti').value.trim().toUpperCase();if(!v||!CFG)return;
  try{const d=await db.collection('tracking').doc(v).get();$('#tr').textContent=d.exists?`Order ${v} — ${d.data().status}`:'No order found with that ID.'}catch(e){$('#tr').textContent='No order found with that ID.'}};
