@@ -128,6 +128,7 @@ nav a{position:relative}nav a::after{content:'';position:absolute;left:0;bottom:
 .pts div{transition:transform .35s,border-color .35s}.pts div:hover{transform:translateX(6px);border-color:var(--orc)}
 }
 @media(max-width:860px){nav a::after{display:none}}
+.op{margin-top:8px}.op small{color:var(--mut);font-size:11px;letter-spacing:.14em;text-transform:uppercase}.ol{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}.ol button{padding:5px 13px;border-radius:99px;border:1px solid var(--line);font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.25s}.ol button:hover{border-color:var(--gold);transform:translateY(-1px)}.ol button.a{background:var(--ink);color:var(--bg);border-color:var(--ink)}.ol i{width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,0,0,.25);display:inline-block}
 </style>
 </head>
 <body>
@@ -194,9 +195,14 @@ const $=s=>document.querySelector(s),tk=n=>'৳'+Number(n).toLocaleString();
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const CFG=!FB.apiKey.startsWith('PASTE');let db,au;
 if(CFG){firebase.initializeApp(FB);db=firebase.firestore();au=firebase.auth()}
-let P=[],AP=[],O=[],cart=[],tab='p',fc='All',cur,user=null,ed=false,unsubs=[];
+let P=[],AP=[],O=[],cart=[],sel={},tab='p',fc='All',cur,user=null,ed=false,unsubs=[];
 const PH=()=>"data:image/svg+xml,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='#efe3dd'/><g fill='none' stroke='#b8955a' stroke-width='1.2'><path d='M50 55c-9-3-13-12-9-18 6 0 9 6 9 18zM50 55c9-3 13-12 9-18-6 0-9 6-9 18zM50 55c-12 2-19 7-17 13 8 1 15-3 17-13zM50 55c12 2 19 7 17 13-8 1-15-3-17-13zM50 55v28'/></g></svg>`);
 const img=(p,i=0)=>(p.imgs||[])[i]||PH();
+const CLR={gold:'#b8955a',silver:'#c4c4c4','rose gold':'#d9a38f',pink:'#e8b4c0',white:'#fff',black:'#222',purple:'#9b7bb3',lavender:'#b9a6d9',red:'#c0392b',blue:'#4a74c9',green:'#5a8f6a',ivory:'#f3ead8',cream:'#f3ead8',yellow:'#e6c84a',orange:'#e08a3c',peach:'#f4c2a8'};
+const lst=s=>[...new Set(s.split(',').map(x=>x.trim()).filter(Boolean))].slice(0,12);
+const vl=x=>[x.size,x.color].filter(Boolean).map(esc).join(' / ');
+const opts=p=>['sizes','colors'].map(t=>(p[t]||[]).length?`<div class="op"><small>${t=='sizes'?'Size':'Color'}</small><div class="ol" data-o="${p.id}-${t}">${p[t].map((v,i)=>`<button class="${(sel[p.id]||{})[t]==v?'a':''}" data-i="${i}" onclick="pick('${p.id}','${t}',${i})">${t=='colors'&&CLR[v.toLowerCase()]?`<i style="background:${CLR[v.toLowerCase()]}"></i>`:''}${esc(v)}</button>`).join('')}</div></div>`:'').join('');
+function pick(id,t,i){const p=P.find(x=>x.id==id);if(!p)return;(sel[id]=sel[id]||{})[t]=p[t][i];document.querySelectorAll(`[data-o="${id}-${t}"] button`).forEach(b=>b.classList.toggle('a',+b.dataset.i==i))}
 function toast(m){const t=$('#ts');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800)}
 /* menu */
 const menu=o=>{$('#nv').classList.toggle('on',o);$('#bg').classList.toggle('x',o);$('#bg').setAttribute('aria-expanded',o);sc(o||$('#cd').classList.contains('on'))};
@@ -212,7 +218,7 @@ let lp=null,li=0,tx=0;
 function pop(id){lp=P.find(x=>x.id==id);if(!lp)return;li=lp._i||0;lbDraw();$('#lb').classList.add('on');document.body.style.overflow='hidden'}
 function lbDraw(){const im=lp.imgs||[],n=Math.max(1,im.length);li=(li+n)%n;const e=$('#lbi');e.src=img(lp,li);e.classList.remove('sw');void e.offsetWidth;e.classList.add('sw');
  $('#lbprev').style.display=$('#lbnext').style.display=n>1?'block':'none';
- $('#lbt').innerHTML=`<h3>${esc(lp.name)}</h3><small>${esc(lp.cat)}</small>`+(n>1?`<div class="lbth">${im.map((s,k)=>`<img class="${k==li?'a':''}" src="${s}" onclick="li=${k};lbDraw()">`).join('')}</div>`:'')+`<p style="color:var(--mut);margin:8px 0">${esc(lp.desc)}</p><div class="pr"><b>${tk(lp.price)}</b><button onclick="add('${lp.id}')">Add to cart</button></div>`}
+ $('#lbt').innerHTML=`<h3>${esc(lp.name)}</h3><small>${esc(lp.cat)}</small>`+(n>1?`<div class="lbth">${im.map((s,k)=>`<img class="${k==li?'a':''}" src="${s}" onclick="li=${k};lbDraw()">`).join('')}</div>`:'')+`<p style="color:var(--mut);margin:8px 0">${esc(lp.desc)}</p>${opts(lp)}<div class="pr"><b>${tk(lp.price)}</b><button onclick="add('${lp.id}')">Add to cart</button></div>`}
 const lbGo=d=>{if(lp&&(lp.imgs||[]).length>1){li+=d;lbDraw()}};
 function lbClose(){$('#lb').classList.remove('on');document.body.style.overflow=($('#cd').classList.contains('on')||$('#nv').classList.contains('on'))?'hidden':''}
 $('#lbclose').onclick=lbClose;$('#lbprev').onclick=()=>lbGo(-1);$('#lbnext').onclick=()=>lbGo(1);$('#lb').onclick=e=>{if(e.target.id=='lb')lbClose()};
@@ -228,30 +234,34 @@ function shop(){const all=P.filter(p=>p.active),cs=CATS.filter(c=>all.some(p=>p.
  $('#ch').innerHTML=cs.length>1?['All',...cs].map(c=>`<button class="${c==fc?'a':''}" onclick="fc='${c}';shop()">${c}</button>`).join(''):'';
  $('#gr').innerHTML=!CFG?'<p class="empty">Add your Firebase config to load products.</p>':a.length?a.map((p,i)=>`<div class="pc rv" style="--d:${i%4*.08}s"><div class="im" onclick="pop('${p.id}')"><img id="m${p.id}" src="${img(p)}" alt="${esc(p.name)}" loading="lazy"></div>
  ${(p.imgs||[]).length>1?`<div class="th">${p.imgs.map((s,i)=>`<img class="${i?'':'a'}" src="${s}" onclick="sw('${p.id}',${i},this)">`).join('')}</div>`:''}
- <div class="pb"><h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p><div class="pr"><b>${tk(p.price)}</b><button onclick="add('${p.id}')">Add to cart</button></div></div></div>`).join(''):'<p class="empty">New pieces are blooming soon ✿</p>'}
+ <div class="pb"><h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p>${opts(p)}<div class="pr"><b>${tk(p.price)}</b><button onclick="add('${p.id}')">Add to cart</button></div></div></div>`).join(''):'<p class="empty">New pieces are blooming soon ✿</p>'}
 function sw(id,i,el){const p=P.find(x=>x.id==id);p._i=i;$('#m'+id).src=p.imgs[i];el.parentNode.querySelectorAll('img').forEach(x=>x.classList.remove('a'));el.classList.add('a')}
 if(CFG)db.collection('products').where('active','==',true).onSnapshot(s=>{P=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.created||0)-(a.created||0));shop();drawCart()},()=>{$('#gr').innerHTML='<p class="empty">Could not load products. Please refresh.</p>'});
 /* cart */
 function cart_(o){$('#cd').classList.toggle('on',o);sc(o||$('#nv').classList.contains('on'))}
 $('#cb').onclick=()=>{menu(false);cart_(true)};$('#cx').onclick=()=>cart_(false);
-function add(id){const c=cart.find(x=>x.id==id);c?c.q++:cart.push({id,q:1});drawCart();toast('Added to cart');const b=$('#cn');b.classList.remove('b');void b.offsetWidth;b.classList.add('b')}
-function rm(id){cart=cart.filter(x=>x.id!=id);drawCart()}
-function drawCart(){const it=cart.map(c=>({...c,p:P.find(p=>p.id==c.id)})).filter(c=>c.p);
+function add(id){const p=P.find(x=>x.id==id);if(!p)return;const s=sel[id]||{},hs=(p.sizes||[]).length,hc=(p.colors||[]).length;if(hs&&!p.sizes.includes(s.sizes))return toast('Please choose a size');if(hc&&!p.colors.includes(s.colors))return toast('Please choose a color');const size=hs?s.sizes:'',color=hc?s.colors:'';const c=cart.find(x=>x.id==id&&x.size==size&&x.color==color);c?c.q++:cart.push({id,q:1,size,color});drawCart();toast('Added to cart');const b=$('#cn');b.classList.remove('b');void b.offsetWidth;b.classList.add('b')}
+function rm(i){cart.splice(i,1);drawCart()}
+function drawCart(){const it=cart.map((c,i)=>({...c,i,p:P.find(p=>p.id==c.id)})).filter(c=>c.p);
  $('#cn').textContent=it.reduce((a,c)=>a+c.q,0);
- $('#ci').innerHTML=it.length?it.map(c=>`<div class="ci"><img src="${img(c.p)}"><div>${esc(c.p.name)}<br><small>${c.q} × ${tk(c.p.price)}</small></div><button onclick="rm('${c.id}')">×</button></div>`).join(''):'<p class="empty">Your cart is empty.</p>';
+ $('#ci').innerHTML=it.length?it.map(c=>`<div class="ci"><img src="${img(c.p)}"><div>${esc(c.p.name)}${vl(c)?`<br><small>${vl(c)}</small>`:''}<br><small>${c.q} × ${tk(c.p.price)}</small></div><button onclick="rm(${c.i})">×</button></div>`).join(''):'<p class="empty">Your cart is empty.</p>';
  $('#ck').style.display=it.length?'block':'none';$('#ct').textContent=tk(it.reduce((a,c)=>a+c.q*c.p.price,0))}
 const rid=()=>'FL-'+Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[b%32]).join('');
-$('#po').onclick=async()=>{
+const lk=()=>{try{return +localStorage.getItem('fl_lock')||0}catch(e){return 0}};
+function tick(){const t=lk()-Date.now(),b=$('#po');if(t>0){b.disabled=true;b.dataset.l=1;b.textContent=`Next order in ${Math.floor(t/6e4)}:${String(Math.floor(t/1e3)%60).padStart(2,'0')}`}else if(b.dataset.l){b.dataset.l='';b.disabled=false;b.textContent='Place Order'}}
+setInterval(tick,1000);tick();
+$('#po').onclick=async()=>{if(lk()>Date.now())return toast('Please wait before placing another order');
  const n=$('#on').value.trim(),ph=$('#op').value.trim(),ad=$('#oa').value.trim();
  if(!n||!ph||!ad)return toast('Please fill name, phone and address');
  let pk=ph.replace(/\D/g,'');if(pk.startsWith('880'))pk=pk.slice(2);if(pk.length<10||pk.length>15)return toast('Please enter a valid phone number');
- const items=cart.map(c=>{const p=P.find(x=>x.id==c.id);return p&&{name:p.name,price:p.price,q:c.q}}).filter(Boolean);
+ const items=cart.map(c=>{const p=P.find(x=>x.id==c.id);return p&&{name:p.name,price:p.price,q:c.q,...(c.size?{size:c.size}:{}),...(c.color?{color:c.color}:{})}}).filter(Boolean);
  if(!items.length)return;const id=rid(),o={n,ph,ad,pk,items,total:items.reduce((a,i)=>a+i.q*i.price,0),status:'Pending',date:Date.now()};
  $('#po').disabled=true;
  try{const b=db.batch();b.set(db.collection('locks').doc(pk),{at:firebase.firestore.FieldValue.serverTimestamp()});b.set(db.collection('orders').doc(id),o);b.set(db.collection('tracking').doc(id),{status:'Pending'});await b.commit();
+  try{localStorage.setItem('fl_lock',Date.now()+6e5)}catch(e){}
   cart=[];drawCart();cart_(false);['#on','#op','#oa'].forEach(s=>$(s).value='');$('#ti').value=id;toast('Order placed! Tracking ID: '+id)}
- catch(e){console.error('Order failed:',e.code,e.message);toast(e.code=='permission-denied'?'Order was rejected (code: permission-denied). If this keeps happening, republish the latest Firestore rules.':'Could not place order — please try again')}
- $('#po').disabled=false};
+ catch(e){toast(e.code=='permission-denied'?'You ordered recently — please wait 10 minutes before ordering again':'Could not place order — please try again')}
+ $('#po').disabled=false;tick()};
 /* track (public, status only) */
 $('#tb').onclick=async()=>{const v=$('#ti').value.trim().toUpperCase();if(!v||!CFG)return;
  try{const d=await db.collection('tracking').doc(v).get();$('#tr').textContent=d.exists?`Order ${v} — ${d.data().status}`:'No order found with that ID.'}catch(e){$('#tr').textContent='No order found with that ID.'}};
@@ -275,23 +285,23 @@ function prods(){$('#abd').innerHTML=`<button class="btn g" style="margin-bottom
 const fail=()=>toast('Failed — are you signed in as the owner?');
 function tg(id){const p=AP.find(x=>x.id==id);db.collection('products').doc(id).update({active:!p.active}).catch(fail)}
 function del(id){if(confirm('Delete this product?'))db.collection('products').doc(id).delete().catch(fail)}
-function edit(id){ed=true;cur=id?JSON.parse(JSON.stringify(AP.find(x=>x.id==id))):{id:null,name:'',price:'',desc:'',cat:'',imgs:[],active:true};cur.imgs=cur.imgs||[];
- $('#abd').innerHTML=`<h3 class="serif" style="font-size:30px;margin-bottom:14px">${cur.id?'Edit':'New'} product</h3><input id="fn" placeholder="Name" value="${esc(cur.name)}"><select id="fcat"><option value="">Choose category (required)</option>${CATS.map(c=>`<option ${c==cur.cat?'selected':''}>${c}</option>`).join('')}</select><input id="fp" type="number" placeholder="Price (৳)" value="${cur.price}"><textarea id="fd" rows="4" placeholder="Description">${esc(cur.desc)}</textarea>
+function edit(id){ed=true;cur=id?JSON.parse(JSON.stringify(AP.find(x=>x.id==id))):{id:null,name:'',price:'',desc:'',cat:'',imgs:[],sizes:[],colors:[],active:true};cur.imgs=cur.imgs||[];cur.sizes=cur.sizes||[];cur.colors=cur.colors||[];
+ $('#abd').innerHTML=`<h3 class="serif" style="font-size:30px;margin-bottom:14px">${cur.id?'Edit':'New'} product</h3><input id="fn" placeholder="Name" value="${esc(cur.name)}"><select id="fcat"><option value="">Choose category (required)</option>${CATS.map(c=>`<option ${c==cur.cat?'selected':''}>${c}</option>`).join('')}</select><input id="fp" type="number" placeholder="Price (৳)" value="${cur.price}"><input id="fsz" placeholder="Sizes (optional) e.g. S, M, L or 6, 7, 8" value="${esc(cur.sizes.join(', '))}"><input id="fcl" placeholder="Colors (optional) e.g. Gold, Silver, Rose Gold" value="${esc(cur.colors.join(', '))}"><textarea id="fd" rows="4" placeholder="Description">${esc(cur.desc)}</textarea>
  <label style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="fa" style="width:auto;margin:0" ${cur.active?'checked':''}> Active (visible in shop)</label>
  <div class="pv" id="pv"></div><input type="file" id="ff" accept="image/*" multiple><small style="color:var(--mut)">Up to 4 photos, first is the cover. Photos are auto-resized.</small><br><br>
  <button class="btn g" onclick="save()">Save</button> <button class="btn o" onclick="admin()">Cancel</button>`;pv();
  $('#ff').onchange=async e=>{for(const f of e.target.files){if(cur.imgs.length>=4){toast('Max 4 photos');break}cur.imgs.push(await rs(f))}e.target.value='';pv()}}
 function pv(){$('#pv').innerHTML=cur.imgs.map((s,i)=>`<div><img src="${s}"><span onclick="cur.imgs.splice(${i},1);pv()">×</span></div>`).join('')}
 const rs=f=>new Promise(r=>{const im=new Image();im.onload=()=>{const s=Math.min(1,700/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.7))};im.src=URL.createObjectURL(f)});
-async function save(){const d={name:$('#fn').value.trim(),price:+$('#fp').value,desc:$('#fd').value.trim(),cat:$('#fcat').value,imgs:cur.imgs,active:$('#fa').checked,created:cur.created||Date.now()};
+async function save(){const d={name:$('#fn').value.trim(),price:+$('#fp').value,desc:$('#fd').value.trim(),cat:$('#fcat').value,imgs:cur.imgs,sizes:lst($('#fsz').value),colors:lst($('#fcl').value),active:$('#fa').checked,created:cur.created||Date.now()};
  if(!d.name||!d.price)return toast('Name and price are required');if(!d.cat)return toast('Please choose a category');
  if(JSON.stringify(d).length>900000)return toast('Photos too large — remove one');
  try{cur.id?await db.collection('products').doc(cur.id).set(d):await db.collection('products').add(d);admin();toast('Saved')}catch(e){fail()}}
 const STAT=['Pending','Confirmed','Shipped','Delivered','Cancelled'];
-function orders(){$('#abd').innerHTML=O.map(o=>`<div class="row" style="align-items:flex-start"><div class="t"><b>${esc(o.id)}</b> · ${new Date(o.date).toLocaleDateString()}<br><small>${esc(o.n)} · ${esc(o.ph)}<br>${esc(o.ad)}<br>${(o.items||[]).map(x=>x.q+'× '+esc(x.name)).join(', ')}</small></div><div><b>${tk(o.total)}</b><select onchange="chs('${o.id}',this.value)" style="margin:6px 0">${STAT.map(s=>`<option ${s==o.status?'selected':''}>${s}</option>`).join('')}</select><button onclick="eo('${o.id}')">Edit</button> <button onclick="dord('${o.id}')">Delete</button></div></div>`).join('')||'<p class="empty">No orders yet.</p>'}
+function orders(){$('#abd').innerHTML=O.map(o=>`<div class="row" style="align-items:flex-start"><div class="t"><b>${esc(o.id)}</b> · ${new Date(o.date).toLocaleDateString()}<br><small>${esc(o.n)} · ${esc(o.ph)}<br>${esc(o.ad)}<br>${(o.items||[]).map(x=>x.q+'× '+esc(x.name)+(vl(x)?' ('+vl(x)+')':'')).join(', ')}</small></div><div><b>${tk(o.total)}</b><select onchange="chs('${o.id}',this.value)" style="margin:6px 0">${STAT.map(s=>`<option ${s==o.status?'selected':''}>${s}</option>`).join('')}</select><button onclick="eo('${o.id}')">Edit</button> <button onclick="dord('${o.id}')">Delete</button></div></div>`).join('')||'<p class="empty">No orders yet.</p>'}
 function eo(id){ed=true;cur=JSON.parse(JSON.stringify(O.find(x=>x.id==id)));cur.items=cur.items||[];
  $('#abd').innerHTML=`<h3 class="serif" style="font-size:30px;margin-bottom:14px">Edit order ${esc(cur.id)}</h3><input id="en" placeholder="Customer name" value="${esc(cur.n)}"><input id="ep" placeholder="Phone" value="${esc(cur.ph)}"><textarea id="ea" rows="3" placeholder="Address">${esc(cur.ad)}</textarea><select id="es">${STAT.map(s=>`<option ${s==cur.status?'selected':''}>${s}</option>`).join('')}</select><div id="ei"></div><b id="et" style="display:block;margin:10px 0 16px"></b><button class="btn g" onclick="so()">Save changes</button> <button class="btn o" onclick="admin()">Cancel</button>`;ei()}
-function ei(){$('#ei').innerHTML=cur.items.map((x,i)=>`<div class="row"><div class="t">${esc(x.name)}<br><small>${tk(x.price)} each</small></div><input type="number" min="1" value="${x.q}" style="width:80px;margin:0" onchange="cur.items[${i}].q=Math.max(1,+this.value||1);ei()"><button onclick="cur.items.splice(${i},1);ei()">Remove</button></div>`).join('')||'<p class="empty">No items.</p>';$('#et').textContent='Total: '+tk(cur.items.reduce((a,x)=>a+x.q*x.price,0))}
+function ei(){$('#ei').innerHTML=cur.items.map((x,i)=>`<div class="row"><div class="t">${esc(x.name)}${vl(x)?` <small>(${vl(x)})</small>`:''}<br><small>${tk(x.price)} each</small></div><input type="number" min="1" value="${x.q}" style="width:80px;margin:0" onchange="cur.items[${i}].q=Math.max(1,+this.value||1);ei()"><button onclick="cur.items.splice(${i},1);ei()">Remove</button></div>`).join('')||'<p class="empty">No items.</p>';$('#et').textContent='Total: '+tk(cur.items.reduce((a,x)=>a+x.q*x.price,0))}
 async function so(){const n=$('#en').value.trim(),ph=$('#ep').value.trim(),ad=$('#ea').value.trim();if(!n||!ph||!ad)return toast('Name, phone and address are required');if(!cur.items.length)return toast('An order needs at least one item');
  const d={n,ph,ad,status:$('#es').value,items:cur.items,total:cur.items.reduce((a,x)=>a+x.q*x.price,0)};
  try{const b=db.batch();b.update(db.collection('orders').doc(cur.id),d);b.set(db.collection('tracking').doc(cur.id),{status:d.status});await b.commit();admin();toast('Order updated')}catch(e){fail()}}
